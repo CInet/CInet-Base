@@ -1,13 +1,13 @@
 use Modern::Perl 2018;
 use Carp;
 
-package CInet::Results::Grep;
+package CInet::Seq::Grep;
 
 use Modern::Perl 2018;
 use Carp;
 
 use Role::Tiny::With;
-with 'CInet::Results';
+with 'CInet::Seq';
 
 sub new {
     my ($class, $prev, $code) = @_;

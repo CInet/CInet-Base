@@ -1,4 +1,4 @@
-package CInet::Results;
+package CInet::Seq;
 
 use Modern::Perl 2018;
 use Carp;
@@ -26,29 +26,33 @@ sub count {
 }
 
 sub map {
-    CInet::Results::Map->new(@_)
+    CInet::Seq::Map->new(@_)
 }
 
 sub grep {
-    CInet::Results::Grep->new(@_)
+    CInet::Seq::Grep->new(@_)
+}
+
+sub first {
+    my ($self, $code) = @_;
+    $code //= sub { 1 };
+    $self->grep($code)->next
 }
 
 sub any {
-    my ($self, $code) = @_;
-    $code //= sub { 1 };
-    $self->grep($code)->inhabited
+    my $self = shift;
+    defined $self->first(@_)
+}
+
+sub none {
+    my $self = shift;
+    not defined $self->first(@_)
 }
 
 sub all {
     my ($self, $code) = @_;
     $code //= sub { 1 };
-    not $self->grep(sub{ not $code->($_) })->inhabited
-}
-
-sub none {
-    my ($self, $code) = @_;
-    $code //= sub { 1 };
-    not $self->any($code)
+    not defined $self->first(sub{ not $code->($_) })
 }
 
 ":wq"

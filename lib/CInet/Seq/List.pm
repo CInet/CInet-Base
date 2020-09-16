@@ -1,10 +1,10 @@
-package CInet::Results::List;
+package CInet::Seq::List;
 
 use Modern::Perl 2018;
 use Carp;
 
 use Role::Tiny::With;
-with 'CInet::Results';
+with 'CInet::Seq';
 
 sub new {
     my $class = shift;
