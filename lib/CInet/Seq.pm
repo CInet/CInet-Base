@@ -7,6 +7,8 @@ use Role::Tiny;
 
 requires qw(next);
 
+### Basic data processing
+
 sub inhabited {
     defined shift->next
 }
@@ -25,12 +27,35 @@ sub count {
     scalar shift->list
 }
 
+### Standard functional
+
 sub map {
     CInet::Seq::Map->new(@_)
 }
 
 sub grep {
     CInet::Seq::Grep->new(@_)
+}
+
+sub reduce {
+    no strict 'refs';
+    use Sub::Identify qw(stash_name);
+
+    my ($self, $code, $id) = @_;
+    my $a = $id // $self->next;
+    return undef if not defined $a;
+
+    # This code setting special globals $a and $b for the call to the
+    # reducer is is borrowed from List::Util::PP but using Sub::Identify
+    # because we can't rely on $code using globals from caller's package.
+    my $pkg = stash_name($code);
+    local *{"${pkg}::a"} = \$a;
+    my $glob_b = \*{"${pkg}::b"};
+    while (defined(my $b = $self->next)) {
+        local *$glob_b = \$b;
+        $a = $code->($a, $b);
+    }
+    $a
 }
 
 sub first {
