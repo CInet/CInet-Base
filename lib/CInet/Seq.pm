@@ -80,4 +80,10 @@ sub all {
     not defined $self->first(sub{ not $code->($_) })
 }
 
+### Symmetry-related
+
+sub modulo {
+    CInet::Seq::Modulo->new(@_)
+}
+
 ":wq"

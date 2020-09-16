@@ -4,12 +4,13 @@ use Modern::Perl 2018;
 use Carp;
 
 use CInet::Cube;
-use Array::Set qw(set_union set_symdiff set_diff);
+use Array::Set qw(set_union);
 
 use parent 'Clone';
 
 sub new {
     my ($class, $cube, $A) = @_;
+    $cube = CUBE($cube) unless $cube->isa('CInet::Cube');
     my $self = bless [ $cube ], $class;
 
     $A //= '0' x $cube->squares;
@@ -32,12 +33,8 @@ sub permute {
     my $new = $self->clone;
     my $cube = $new->[0];
     for my $ijK ($cube->squares) {
-        my ($ij, $K) = @$ijK;
         my $i = $cube->pack($ijK);
-        my $j = $cube->pack([
-            [ $p->@[@$ij] ],
-            [ $p->@[@$K]  ],
-        ]);
+        my $j = $cube->pack($cube->permute($p => $ijK));
         $new->[$j] = $self->[$i];
     }
     $new
@@ -60,13 +57,19 @@ sub swap {
     my $new = $self->clone;
     my $cube = $new->[0];
     for my $ijK ($cube->squares) {
-        my ($ij, $K) = @$ijK;
         my $i = $cube->pack($ijK);
-        my $j = $cube->pack([ $ij,
-            set_symdiff($K, set_diff($Z, $ij))
-        ]);
+        my $j = $cube->pack($cube->swap($Z => $ijK));
         $new->[$j] = $self->[$i];
     }
+    $new
+}
+
+sub act {
+    my ($self, $g) = @_;
+    my $new = $self->clone;
+    my $cube = $new->[0];
+    my @M = 1 .. scalar($cube->squares);
+    $new->@[@M] = $self->@[$g->@[map { $_-1 } @M]];
     $new
 }
 

@@ -8,7 +8,7 @@ use Carp;
 use Scalar::Util qw(reftype);
 use List::Util qw(uniq);
 use Algorithm::Combinatorics qw(subsets);
-use Array::Set qw(set_union set_intersect set_diff);
+use Array::Set qw(set_union set_intersect set_diff set_symdiff);
 
 use CInet::Hash::FaceKey;
 use CInet::Imset;
@@ -106,11 +106,26 @@ sub unpack {
         confess "lookup failed on $d/$v";
 }
 
+sub permute {
+    my ($self, $p, $IK) = @_;
+    my ($I, $K) = $IK->@*;
+    [
+        [ $p->@[map { $_-1} @$I] ],
+        [ $p->@[map { $_-1} @$K] ],
+    ]
+}
+
 sub dual {
-    my $self = shift;
-    my ($I, $K) = shift->@*;
+    my ($self, $IK) = @_;
+    my ($I, $K) = $IK->@*;
     my $N = $self->{set};
-    [ $I, set_diff($N, $K) ]
+    [ $I, set_diff($N, set_union($I, $K)) ]
+}
+
+sub swap {
+    my ($self, $Z, $IK) = @_;
+    my ($I, $K) = $IK->@*;
+    [ $I, set_symdiff($K, set_diff($Z, $I)) ]
 }
 
 sub h {
