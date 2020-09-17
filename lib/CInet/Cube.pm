@@ -35,7 +35,24 @@ use CInet::Imset;
 
 =head1 DESCRIPTION
 
+A C<CInet::Cube> object represents a finite ground set and provides access
+to related combinatorial data in the form of the face lattice of the cube.
+For example, all subsets of the ground set are available as C<< ->vertices >>,
+or all CI statements on a random vector indexed by the ground set are C<< -> squares >>.
+This object bundles this data and implements transformations on them and
+provides a common geometric language to talk about them.
 
+In addition, the cube implements the I<proper ordering> of each set of
+fixed-dimensional faces. These orderings are used in L<CInet::Relation>
+and topical C<CInet::*> modules whenever combinatorial objects must be
+mapped to a contiguous sequence of integers C<1 .. k> usually to allocate
+variables in a domain-specific solver that computes a certain property
+of the CI structure.
+
+The proper, agreed-upon ordering allows to write problem descriptions
+which are mutually consistent. It also allows to serialize a L<CInet::Relation>
+to a unique string that can be read in by other programs implementing the
+same canonical ordering.
 
 =cut
 
