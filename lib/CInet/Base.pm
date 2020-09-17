@@ -179,6 +179,10 @@ L<CInet::Seq::Grep> a C<grep> on a sequence,
 
 =item *
 
+L<CInet::Seq::Uniq> a C<uniq> on a sequence,
+
+=item *
+
 L<CInet::Seq::Modulo> for reducing a sequence of relations modulo one
 of the symmetry groups from L<CInet::Symmetry>.
 
@@ -198,6 +202,7 @@ sub import {
     CInet::Seq         -> import::into(1);
     CInet::Seq::Map    -> import::into(1);
     CInet::Seq::Grep   -> import::into(1);
+    CInet::Seq::Uniq   -> import::into(1);
     CInet::Seq::List   -> import::into(1);
     CInet::Seq::Modulo -> import::into(1);
 }

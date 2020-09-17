@@ -241,7 +241,7 @@ gives the image of the i-th element of the ground set.
 # Convert a list of ground set elements to their 0-based indices into
 # the ground set.
 sub _index {
-    use List::MoreUtils qw(firstidx any);
+    use List::SomeUtils qw(firstidx any);
     my $self = shift;
     my @indices = map {
         my $x = $_;

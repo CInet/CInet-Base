@@ -13,18 +13,20 @@ use CInet::Symmetry;
 
 sub new {
     my ($class, $prev, $group) = @_;
-    bless { prev => $prev, group => $group, hash => { } }, $class
+    bless { prev => $prev, group => $group, seen => { } }, $class
 }
 
 sub next {
-    my ($prev, $group, $hash) = shift->@{'prev', 'group', 'hash'};
+    my ($prev, $group, $seen) = shift->@{'prev', 'group', 'seen'};
     # Hash contains full orbits of every relation that we returned.
     while (defined(my $x = $prev->next)) {
-        next if $hash->{$x->str};
+        next if $seen->{$x->str};
         # $x is new. Maintain the invariant before returning it.
-        $hash->{$x->act($_)->str}++ for @$group;
+        $seen->{$x->act($_)->str}++ for @$group;
         return $x;
     }
+    # Clean up cache
+    undef($seen->%*);
     undef
 }
 

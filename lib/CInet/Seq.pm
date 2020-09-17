@@ -37,6 +37,10 @@ sub grep {
     CInet::Seq::Grep->new(@_)
 }
 
+sub uniq {
+    CInet::Seq::Uniq->new(@_)
+}
+
 sub reduce {
     no strict 'refs';
     use Sub::Identify qw(stash_name);
