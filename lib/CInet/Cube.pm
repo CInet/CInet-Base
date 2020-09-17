@@ -106,12 +106,27 @@ sub unpack {
         confess "lookup failed on $d/$v";
 }
 
+# Convert a list of ground set elements to their 0-based indices into
+# the ground set.
+sub _index {
+    use List::MoreUtils qw(firstidx any);
+    my $self = shift;
+    my @indices = map {
+        my $x = $_;
+        firstidx { $x == $_ } $self->{set}->@*
+    } @_;
+    confess "could not find some of the elements [@{[ join(', ', @_) ]}] "
+        . " over ground set @{[ join('', $self->{set}->@*) ]}"
+        if any { $_ < 0 } @indices;
+    @indices
+}
+
 sub permute {
     my ($self, $p, $IK) = @_;
     my ($I, $K) = $IK->@*;
     [
-        [ $p->@[map { $_-1} @$I] ],
-        [ $p->@[map { $_-1} @$K] ],
+        [ $p->@[$self->_index(@$I)] ],
+        [ $p->@[$self->_index(@$K)] ],
     ]
 }
 
