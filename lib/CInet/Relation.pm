@@ -8,6 +8,13 @@ use Array::Set qw(set_union);
 
 use parent 'Clone';
 
+use overload (
+    q[=]  => sub { shift->clone },
+    q[+]  => \&join,
+    q[*]  => \&meet,
+    q[""] => \&str,
+);
+
 sub new {
     my ($class, $cube, $A) = @_;
     $cube = CUBE($cube) unless $cube->isa('CInet::Cube');
@@ -26,6 +33,38 @@ sub cube {
 sub ci {
     my ($self, $ijK) = @_;
     $self->[ $self->[0]->pack($ijK) ] == 0
+}
+
+sub indepenent {
+    my $self = shift;
+    my $cube = $self->[0];
+    grep { $self->[ $cube->pack($_) ] == 0 } $self->squares
+}
+
+sub dependent {
+    my $self = shift;
+    my $cube = $self->[0];
+    grep { $self->[ $cube->pack($_) ] != 0 } $self->squares
+}
+
+sub meet {
+    my ($R, $S, $swap) = @_;
+    my $T = $R->clone;
+    for my $i (keys @$R) {
+        next unless $i;
+        $T->[$i] = 0 if $S->[$i] == 0;
+    }
+    $T
+}
+
+sub join {
+    my ($R, $S, $swap) = @_;
+    my $T = $R->clone;
+    for my $i (keys @$R) {
+        next unless $i;
+        $T->[$i] = 1 if $S->[$i] != 0;
+    }
+    $T
 }
 
 sub permute {
@@ -116,7 +155,7 @@ sub minors {
 
 sub str {
     my $self = shift;
-    join '', $self->@[1 .. $self->$#*]
+    CORE::join '', $self->@[1 .. $self->$#*]
 }
 
 # Try to be helpful.
