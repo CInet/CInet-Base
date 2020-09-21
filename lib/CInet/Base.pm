@@ -6,7 +6,7 @@ CInet::Base - The basis for computations on CI structures
 
 =head1 SYNOPSIS
 
-    # Imports CInet::{Cube,Imset,Relation,Symmetry,Seq}
+    # Imports CInet::{Cube,Relation,Symmetry,Seq}
     use CInet::Base;
 
 =head2 VERSION
@@ -92,20 +92,8 @@ computed using solvers for the Boolean satisfiability problem SAT where
 one Boolean variable must be allocated for every CI statement. This allocation
 is provided by the proper ordering of 2-face of the cube.
 
-The cube is a kind of I<domain> object which must be associated to L<CInet::Imset>
-and L<CInet::Relation> objects in order for them to work properly.
-
-=head2 CInet::Imset
-
-A L<CInet::Imset> is an B<i>nteger-valued B<m>ultiB<set>. It associates to
-each subset of a given set C<N> an integer number. Studený uses imsets in
-the theory of conditional independence structures to describe information
-inequalities, that is linear inequalities with integer coefficients on
-the cone on multiinformation functions, the faces of which correspond
-to CI structures. The work of Matúš studies dually integer polymatroids,
-which are abstractions of entropies or multiinformation functions,
-which can also be written as imsets. Each imset requires a L<CInet::Cube>
-domain over which (that is over whose vertices) it is defined.
+The cube is a kind of I<domain> object which must be associated to a
+L<CInet::Relation> objects in order for it to work properly.
 
 =head2 CInet::Relation
 
@@ -151,12 +139,12 @@ each group in bulk. See L<CInet::Seq::Modulo> for how to do this.
 
 =head2 CInet::Seq
 
-Collections of L<CInet::Relation> or L<CInet::Imset> objects are dealt with
-I<en masse> using objects of type L<CInet::Seq>. Such an object stands for
-a I<sequence> of objects that are lazily produced. They can be filtered and
-transformed lazily. The L<CInet::Seq> package is a role which topical modules
-in the C<CInet::*> namespace specialize when certain transformations on
-collections of relations can be implemented more efficiently.
+Collections of L<CInet::Relation> or related objects are dealt with I<en masse>
+using objects of type L<CInet::Seq>. Such an object stands for a I<sequence>
+of objects that are lazily produced. They can be filtered and transformed lazily.
+The L<CInet::Seq> package is a role which topical modules in the C<CInet::*>
+namespace specialize when certain transformations on collections of relations
+can be implemented more efficiently.
 
 This mix of composable topical specializations and inherent laziness leads
 to very nice, self-clocking pipelines.
@@ -195,7 +183,6 @@ use Import::Into;
 
 sub import {
     CInet::Cube     -> import::into(1);
-    CInet::Imset    -> import::into(1);
     CInet::Relation -> import::into(1);
     CInet::Symmetry -> import::into(1);
 
