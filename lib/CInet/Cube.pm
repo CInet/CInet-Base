@@ -26,7 +26,6 @@ use Export::Attrs;
 use Carp;
 
 use Scalar::Util qw(reftype);
-use List::Util qw(uniq);
 use Algorithm::Combinatorics qw(subsets);
 use Array::Set qw(set_union set_intersect set_diff set_symdiff);
 
