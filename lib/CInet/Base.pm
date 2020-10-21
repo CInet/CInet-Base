@@ -131,10 +131,11 @@ The smallest group is the symmetric group on the ground set. Every reasonable
 property of CI structures is invariant under this group.
 
 In the middle between these two groups is the twisted symmetric group,
-which adds one hyperoctahedral involution to the standard symmetric group.
+which adds one hyperoctahedral involution (called I<duality>) to the
+standard symmetric group.
 
 The L<CInet::Symmetry> module provides these three groups in a form that
-is suitable to reduce a collection of L<CInet::Relation> obejcts modulo
+is suitable to reduce a collection of L<CInet::Relation> objects modulo
 each group in bulk. See L<CInet::Seq::Modulo> for how to do this.
 
 =head2 CInet::Seq
@@ -143,11 +144,14 @@ Collections of L<CInet::Relation> or related objects are dealt with I<en masse>
 using objects of type L<CInet::Seq>. Such an object stands for a I<sequence>
 of objects that are lazily produced. They can be filtered and transformed lazily.
 The L<CInet::Seq> package is a role which topical modules in the C<CInet::*>
-namespace specialize when certain transformations on collections of relations
-can be implemented more efficiently.
+namespace specialize when certain transformations on collections with a
+specific backing representation of relations can be implemented more
+efficiently.
 
 This mix of composable topical specializations and inherent laziness leads
-to very nice, self-clocking pipelines.
+to "self-clocking" pipelines which can be used to enumerate structures with
+a specific set of properties or non-properties, and in particular search
+for counterexamples to conjectures.
 
 Implementations of the L<CInet::Seq> role included in this distribution are
 
@@ -167,11 +171,11 @@ L<CInet::Seq::Grep> a C<grep> on a sequence,
 
 =item *
 
-L<CInet::Seq::Uniq> a C<uniq> on a sequence,
+L<CInet::Seq::Uniq> a stringy C<uniq> on a sequence,
 
 =item *
 
-L<CInet::Seq::Modulo> for reducing a sequence of relations modulo one
+L<CInet::Seq::Modulo> reducing a sequence of relations modulo one
 of the symmetry groups from L<CInet::Symmetry>.
 
 =back
