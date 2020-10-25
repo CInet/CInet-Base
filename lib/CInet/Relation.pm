@@ -9,6 +9,9 @@ CInet::Relation - An abstract (local) CI relation
     # Create a relation from a string representation
     my $A = CInet::Relation->new(CUBE(5) => '01111111110111111110111111110111111011111111111011111101111101111011111111011111');
 
+    # Partially defined and oriented structures are supported
+    my $U = CInet::Relation->new(CUBE(4) => '****---0----0---+++++*++');
+
     # Print all isomorphic relations (with repetition)
     # in the same binary format.
     use Algorithm::Combinatorics qw(permutations);
@@ -31,15 +34,40 @@ use Clone qw(clone);
 
 C<CInet::Relation> is the main object of interest of this distribution.
 It represents an abstract CI relation (or CI structure), that is a
-collection of local conditional independence statements C<< (ij|K) >>.
+collection of local conditional independence statements C<< (ij|K) >>,
+potentially with abstract coefficients.
 
 Each relation requires a domain in the form of a L<CInet::Cube> to be
 attached to it, which provides access to the ground set of the relation.
-A CInet::Relation is a mapping of its cube's C<< ->squares >> to true
-and false. In stringifications, B<true> will be represented by B<0>
-and B<false> by B<1>. This may seem backwards at first, but it makes
-sense when you think of conditional independence as defined by an
-equation and dependence by an inequation.
+A CInet::Relation is a mapping of its cube's C<< ->squares >> to certain
+coefficients. The type of coefficients used determines the type of
+relation and how it is treated by other code:
+
+=over
+
+=item *
+
+B<0> and B<1> mean true and false, respectively. Read that again:
+B<0> means true and B<1> means false. This may seem backwards at
+first, but it makes sense when you think of conditional independence
+(the symbol is true) as an equation and dependence (the symbol is
+false) as an inequation. A CI structure using only these coefficients
+is I<ordinary> and is the most common type.
+
+=item *
+
+One can use additionally B<+> and B<-> to make the structure I<oriented>.
+The B<+> and B<-> refine dependencies (B<1>) into positive and negative
+correlations. It is legal to mix B<+>, B<-> and B<1>, depending on how
+much you know about specific dependencies.
+
+=item *
+
+The symbol B<*> can be used for to denote unknown dependence status.
+A CI structure with some B<*> coefficient is I<partially defined>.
+It may be ordinary or oriented otherwise.
+
+=back
 
 This package provides methods for manipulating CI structures to the
 extent that computational methods are available in this Base distribution:
@@ -77,9 +105,9 @@ use overload (
 Create a new CInet::Relation object. The first argument is the mandatory
 L<CInet::Cube> instance which provides the ground set of the relation.
 The second argument is an optional string that gives the exact CI structure
-as a binary string, just like one that the L<str> method would produce.
-If this string is not provided, the structure starts out B<empty>, that is
-no independencies hold, everything is dependent.
+as a string of coefficients, just like one that the L<str> method would
+produce. If this string is not provided, the structure starts out
+completely undefined, that is consisting of all B<*> coefficients.
 
 =cut
 
@@ -88,7 +116,7 @@ sub new {
     $cube = CUBE($cube) unless $cube->isa('CInet::Cube');
     my $self = bless [ $cube ], $class;
 
-    $A //= '1' x $cube->squares;
+    $A //= '*' x $cube->squares;
     $self->@[1 .. $cube->squares] = split(//, $A);
 
     $self
@@ -121,11 +149,14 @@ sub cube {
 Given a square C<$ijK>, return whether its corresponding CI statement
 holds in the relation.
 
+The statement holds if and only if its coefficient is B<0>. It is not
+taken to hold when it is undefined.
+
 =cut
 
 sub ci {
     my ($self, $ijK) = @_;
-    $self->[ $self->[0]->pack($ijK) ] == 0
+    $self->[ $self->[0]->pack($ijK) ] eq 0
 }
 
 =head3 independent
@@ -133,14 +164,15 @@ sub ci {
     my @indeps = $A->independent;
 
 Return all independence statements that hold for the relation, as a list
-of C<< $cube->squares >> objects.
+of C<< $cube->squares >> objects. These are all squares for which the
+coefficient is B<0>.
 
 =cut
 
 sub indepenent {
     my $self = shift;
     my $cube = $self->[0];
-    grep { $self->[ $cube->pack($_) ] == 0 } $self->squares
+    grep { $self->[ $cube->pack($_) ] eq 0 } $self->squares
 }
 
 =head3 dependent
@@ -148,15 +180,16 @@ sub indepenent {
     my @deps = $A->dependent;
 
 Return all dependence statements that hold for the relation, as a list
-of C<< $cube->squares >> objects. A statement which is not independent
-is dependent.
+of C<< $cube->squares >> objects. A statement with coefficient B<1>,
+B<+> or B<-> is dependent.
 
 =cut
 
 sub dependent {
+    use Perl6::Junction qw(any);
     my $self = shift;
     my $cube = $self->[0];
-    grep { $self->[ $cube->pack($_) ] != 0 } $self->squares
+    grep { $self->[ $cube->pack($_) ] eq any('1', '+', '-') } $self->squares
 }
 
 =head3 permute
@@ -332,7 +365,10 @@ sub minors {
     my $C = $A->join($B);
 
 Addition of two CInet::Relation objects over the same ground set
-computes their I<join>, which is just the set-theoretic union.
+computes their I<join>, which is the element-wise commutative
+operation defined by the following table:
+
+TODO: NYI
 
 =cut
 
@@ -342,7 +378,7 @@ sub join {
     my $T = $R->clone;
     for my $i (keys @$R) {
         next unless $i;
-        $T->[$i] = 0 if $S->[$i] == 0;
+        ...
     }
     $T
 }
@@ -353,7 +389,10 @@ sub join {
     my $C = $A->meet($B);
 
 Multiplication of two CInet::Relation objects over the same ground set
-computes their I<meet>, which is just the set-theoretic intersection.
+computes their I<meet>, which is the element-wise commutative operation
+defined by the following table
+
+TODO: NYI
 
 =cut
 
@@ -363,7 +402,7 @@ sub meet {
     my $T = $R->clone;
     for my $i (keys @$R) {
         next unless $i;
-        $T->[$i] = 1 if $S->[$i] != 0;
+        ...
     }
     $T
 }
@@ -373,10 +412,9 @@ sub meet {
     say $A;  # 11101001...
 
 Return a string representing the CI structure. The string contains
-C<< $cube->squres >>-many binary digits, either C<0> or C<1>.
-Each such bit indicates whether the corresponding square in the
-proper ordering of squares is contained (C<0>) or not contained (C<1>)
-in the relation.
+C<< $cube->squres >>-many symbols from the coefficient alphabet B<0>,
+B<1>, B<+>, B<->, B<*>. Each symbol corresponds to a CI statement
+via the proper ordering of squares documented in L<CInet::Cube>.
 
 =cut
 

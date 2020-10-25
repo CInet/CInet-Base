@@ -98,11 +98,14 @@ L<CInet::Relation> objects in order for it to work properly.
 =head2 CInet::Relation
 
 A L<CInet::Relation> object represents a CI structure. It associates to
-every 2-face of its domain L<CInet::Cube> a boolean: does the statement
-C<(ij|K)> encoded by the 2-face assert a dependence or an independence?
-Since we take the point of view of conditional independence, the
-independence assertion receives the true value and the dependence
-assertion the false value.
+every 2-face of its domain L<CInet::Cube> a coefficient. Usually these
+coefficients are Boolean: does the statement C<(ij|K)> encoded by the
+2-face assert a dependence or an independence? Since we take the point
+of view of conditional independence, the independence assertion receives
+the true value and the dependence assertion the false value.
+
+Other coefficients one can use are orientations: is the dependence
+positive or negative? Or one can mark a CI statement as undefined.
 
 Every action on the cube over which a relation is defined induces a
 lifted action on the relation. L<CInet::Relation> therefore has methods
