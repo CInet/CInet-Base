@@ -25,7 +25,7 @@ use Carp;
 use CInet::Cube;
 use Array::Set qw(set_union);
 
-use Clone;
+use Clone qw(clone);
 
 =head1 DESCRIPTION
 
