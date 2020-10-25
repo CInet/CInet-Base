@@ -6,7 +6,7 @@ CInet::Seq::Modulo - Lazy symmetry reduction on a Seq object
 
 =head1 SYNOPSIS
 
-    my $mod = $seq->modulo(SYMMETRIC($cube));
+    my $mod = $seq->modulo(SYMMETRIC);
 
 =cut
 
@@ -40,6 +40,12 @@ with 'CInet::Seq';
 
 Constructs a CInet::Seq::Modulo object which reduces incoming elements
 from the C<$source> Seq modulo a C<$group> as presented in L<CInet::Symmetry>.
+
+You can pass the C<CInet::Symmetry::Type> object returned from calling
+one of the symmetry group subs without arguments into this constructor.
+In that case the group will be resolved when the first element's orbit
+must be computed.
+
 Only the first element of any orbit is forwarded to the consumer.
 
 =cut
@@ -76,6 +82,8 @@ sub next {
     # Hash contains full orbits of every relation that we returned.
     while (defined(my $x = $src->next)) {
         next if $seen->{$x};
+        # Resolve the group if only a group type was given.
+        $group = $group->($x) if $group->isa('CInet::Symmetry::Type');
         # $x is new. Maintain the invariant before returning it.
         $seen->{$x->act($_)}++ for @$group;
         return $x;
