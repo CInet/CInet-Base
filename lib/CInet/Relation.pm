@@ -277,6 +277,49 @@ sub act {
     $new
 }
 
+=head3 orbit
+
+    my $seq = $A->orbit(SYMMETRIC);
+
+Return a L<CInet::Seq> instance which enumerates the orbit of the
+invocant under a given symmetric group from L<CInet::Symmetry>.
+If a C<CInet::Symmetry::Type> is passed, it will be instantiated
+with C<< $A->cube >>.
+
+=cut
+
+sub orbit {
+    my ($self, $group) = @_;
+    $group = $group->($self) if $group->isa('CInet::Symmetry::Type');
+    CInet::Seq::List->new(@$group)->map(sub{ $self->act($_) })
+}
+
+=head3 representative
+
+    my $rep = $A->representative(SYMMETRIC);
+
+Return the distinguished representative of the invocant's orbit
+under a given symmetric group from L<CInet::Symmetry>. If a
+C<CInet::Symmetry::Type> is passed, it will be instantiated with
+C<< $A->cube >>.
+
+This method will always return a distinguished representative of
+the symmetry orbit. This is unlike other methods, for examples in
+L<CInet::Seq::Modulo>, which return the first element encountered
+from every incoming orbit.
+
+The representative is distinguished by having the lexicographically
+smallest stringification.
+
+=cut
+
+sub representative {
+    use List::Util qw(minstr);
+    my ($self, $group) = @_;
+    $group = $group->($self) if $group->isa('CInet::Symmetry::Type');
+    minstr map { $self->act($_) } @$group
+}
+
 =head3 minor
 
     my $a = $A->minor($IK);
@@ -338,23 +381,20 @@ sub embed {
 
 =head3 minors
 
-    my @kminors = $A->minors($k);
-    my @allminors = $A->minors;
+    my $k_minors = $A->minors($k);
+    my $all_minors = $A->minors;
 
-Return a list of all minors of a structure. With a given dimension C<$k>,
-only the minors in that dimension are returned. This calls the L<minor>
-method on the invocant once per face.
+Return a L<CInet::Seq> object for iterating over all minors of a structure.
+With a given dimension C<$k>, only the minors in that dimension are enumerated.
+The elements of the Seq are arrayref of C<< [ $face, $minor ] >>.
 
 =cut
 
 sub minors {
     my ($self, $k) = @_;
     my $cube = $self->[0];
-    my @res;
-    for my $IK ($cube->faces($k)) {
-        push @res, [ $IK => $self->minor($IK) ];
-    }
-    @res
+    my @faces = $cube->faces($k);
+    CInet::Seq::List->new(@faces)->map(sub{ [ $_ => $self->minor($_) ] })
 }
 
 =head2 Overloaded operators
