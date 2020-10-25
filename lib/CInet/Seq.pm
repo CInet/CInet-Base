@@ -6,7 +6,16 @@ CInet::Seq - Role for lazy sequences of objects
 
 =head1 SYNOPSIS
 
-    ...
+    # Implement the role
+    package My::Seq {
+        use Role::Tiny::With;
+        with 'CInet::Seq';
+
+        sub next { … }
+    }
+
+    # More methods provided
+    say My::Seq->new(…)->grep(…)->count;
 
 =cut
 

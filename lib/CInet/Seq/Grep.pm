@@ -6,7 +6,8 @@ CInet::Seq::Grep - Lazy grep on a Seq object
 
 =head1 SYNOPSIS
 
-    
+    # Can use $_ or @_ in sub
+    my $filtered = $seq->grep(sub{ … });
 
 =cut
 
@@ -18,6 +19,11 @@ use Carp;
 
 =head1 DESCRIPTION
 
+This class adapts a given L<CInet::Seq> object by filtering its elements.
+It returns only elements for which the provided coderef is truthy.
+
+This class implements the L<CInet::Seq> role.
+
 =cut
 
 use Role::Tiny::With;
@@ -27,13 +33,18 @@ with 'CInet::Seq';
 
 =head3 new
 
-    ...
+    my $grep = CInet::Seq::Grep->new($source, $code);
+
+Constructs a CInet::Seq::Grep object which pulls its elements from the
+C<$source> Seq and filters them through the C<$code> coderef.
+
+The coderef can refer to its argument as either C<$_> or via C<@_>.
 
 =cut
 
 sub new {
-    my ($class, $prev, $code) = @_;
-    bless { prev => $prev, code => $code }, $class
+    my ($class, $src, $code) = @_;
+    bless { src => $src, code => $code }, $class
 }
 
 =head2 Implementation of CInet::Seq
@@ -43,16 +54,16 @@ sub new {
     my $elt = $seq->next;
     last if not defined $elt;
 
-Pull elements from the parent Seq until the first time one of them passes
-the condition supplied on construction. Return either that element or
-C<undef> if the parent Seq is exhausted in the process.
+Pull elements from the source Seq until the first time one of them
+passes the condition supplied on construction. Return either that
+element or C<undef> if the source is exhausted in the process.
 
 =cut
 
 sub next {
-    my ($prev, $code) = shift->@{'prev', 'code'};
+    my ($src, $code) = shift->@{'src', 'code'};
     while (1) {
-        my $x = $prev->next;
+        my $x = $src->next;
         return undef if not defined $x;
         local $_ = $x;
         return $x if $code->($x);
