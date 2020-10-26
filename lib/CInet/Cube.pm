@@ -301,10 +301,24 @@ sub swap {
 
     my $cube = CUBE($n);
     my $cube = CUBE($set);
+    my $cube = CUBE($object);
 
-This is a shorthand for the C<< CInet::Cube->new >> constructor, but it also
-keeps a cache of cube objects indexed by ground sets. Prefer this function
-for getting cubes that you often use.
+This is not only a shorthand for the C<< CInet::Cube->new >> constructor,
+but it also keeps a cache of cube objects indexed by ground sets and it
+tries harder to extract a cube from its input arguments:
+
+=over
+
+=item If the argument is a L<CInet::Cube>, return that.
+
+=item If the argument has a C<cube> method, return that value.
+
+=item Otherwise pass all arguments to the L<#new> constructor.
+
+=back
+
+Prefer this function for getting cubes that you often use. Many gears
+of CInet already use this function for convenience.
 
 This sub is exported by default.
 
@@ -313,9 +327,20 @@ This sub is exported by default.
 # The CUBE sub keeps one instance per ground set around.
 tie my %CUBES, 'CInet::Hash::FaceKey';
 
+sub _get_cube {
+    use Scalar::Util qw(blessed);
+
+    my $x = shift;
+    my $blessed = defined blessed $x;
+
+    $blessed && $x->isa('CInet::Cube') ? $x :
+    $blessed && $x->can('cube') ? $x->cube  :
+    __PACKAGE__->new($x, @_)
+}
+
 sub CUBE :Export(:DEFAULT) {
-    my $N = _make_set(@_);
-    $CUBES{[$N, []]} //= __PACKAGE__->new(@_)
+    my $cube = _get_cube(@_);
+    $CUBES{[ $cube->set, [] ]} //= $cube
 }
 
 =head1 AUTHOR

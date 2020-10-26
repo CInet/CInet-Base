@@ -17,7 +17,6 @@ CInet::Symmetry - Symmetry groups
 # ABSTRACT: Symmetry groups
 package CInet::Symmetry;
 
-use utf8;
 use Modern::Perl 2018;
 use Export::Attrs;
 use Carp;
@@ -45,28 +44,8 @@ tie my %HYPEROCTAHEDRALS, 'CInet::Hash::FaceKey';
 
 =pod
 
-The arguments to each of these subs are interpreted as follows:
-
-=over
-
-=item If the argument is a L<CInet::Cube>, take it.
-
-=item If the argument has a C<cube> method, take its return value.
-
-=item Otherwise pass all arguments to the C<CUBE> function.
-
-=back
-
-=cut
-
-sub _get_cube {
-    my $x = shift;
-    $x->isa('CInet::Cube') ? $x :
-    $x->can('cube') ? $x->cube  :
-    CUBE($x, @_)
-}
-
-=pod
+All arguments are passed to the C<CUBE> sub from L<CInet::Cube> which
+interprets it as a cube as described there.
 
 In addition it is possible to not pass any argument at all. In this case,
 a closure over the sub is returned that you can use later to obtain a
@@ -111,7 +90,7 @@ Return a presentation of the symmetric group on the C<$cube>.
 sub SYMMETRIC :Export(:DEFAULT) {
     return CInet::Symmetry::Type->new(__SUB__) if not @_;
 
-    my $cube = _get_cube(@_);
+    my $cube = CUBE(@_);
     my $N = $cube->set;
     $SYMMETRICS{[$N, []]} //= do {
         # Take an arrayref permuting $cube->set and lift it to an arrayref
@@ -145,7 +124,7 @@ Return a presentation of the twisted symmetric group on the C<$cube>.
 sub TWISTED :Export(:DEFAULT) {
     return CInet::Symmetry::Type->new(__SUB__) if not @_;
 
-    my $cube = _get_cube(@_);
+    my $cube = CUBE(@_);
     my $N = $cube->set;
     $TWISTEDS{[$N, []]} //= do {
         my $lift = sub {
@@ -180,7 +159,7 @@ Return a presentation of the hyperoctahedral group on the C<$cube>.
 sub HYPEROCTAHEDRAL :Export(:DEFAULT) {
     return CInet::Symmetry::Type->new(__SUB__) if not @_;
 
-    my $cube = _get_cube(@_);
+    my $cube = CUBE(@_);
     my $N = $cube->set;
     $HYPEROCTAHEDRALS{[$N, []]} //= do {
         my $lift = sub {
