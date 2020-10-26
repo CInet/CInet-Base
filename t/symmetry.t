@@ -50,6 +50,9 @@ cmp_deeply [orbit_sizes SYMMETRIC],       modbag(@modSn), 'symmetric orbit sizes
 cmp_deeply [orbit_sizes TWISTED],         modbag(@modTn), 'twisted orbit sizes match';
 cmp_deeply [orbit_sizes HYPEROCTAHEDRAL], modbag(@modBn), 'hyperoctahedral orbit sizes match';
 
+# Also test CInet::Seq::Uniq
+is gaussoids->map(sub{ $_->representative(SYMMETRIC) })->uniq->count, 58, 'symmetric orbit size again';
+
 done_testing;
 
 __DATA__
