@@ -13,13 +13,6 @@ CInet::Base - The basis for computations on CI structures
 
 This document describes CInet::Base v0.9.0.
 
-=cut
-
-# ABSTRACT: The basis for computations on CI structures
-package CInet::Base;
-
-our $VERSION = "v0.9.0";
-
 =head1 DESCRIPTION
 
 This module imports all modules of the CInet::Base distribution.
@@ -183,25 +176,6 @@ of the symmetry groups from L<CInet::Symmetry>.
 
 =back
 
-=cut
-
-use Modern::Perl 2018;
-use Import::Into;
-
-sub import {
-    CInet::Cube       -> import::into(1);
-    CInet::Cube::Face -> import::into(1);
-    CInet::Relation   -> import::into(1);
-    CInet::Symmetry   -> import::into(1);
-
-    CInet::Seq         -> import::into(1);
-    CInet::Seq::Map    -> import::into(1);
-    CInet::Seq::Grep   -> import::into(1);
-    CInet::Seq::Uniq   -> import::into(1);
-    CInet::Seq::List   -> import::into(1);
-    CInet::Seq::Modulo -> import::into(1);
-}
-
 =head1 AUTHOR
 
 Tobias Boege <tobs@taboege.de>
@@ -213,6 +187,3 @@ This software is copyright (C) 2020 by Tobias Boege.
 This is free software; you can redistribute it and/or
 modify it under the terms of the Artistic License 2.0.
 
-=cut
-
-":wq"
