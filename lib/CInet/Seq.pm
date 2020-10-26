@@ -229,6 +229,21 @@ sub reduce {
     $a
 }
 
+=head4 stringify
+
+    my $strseq = $seq->stringify;
+    my $strseq = $seq->stringify(\&stringifier);
+
+This is a L<#map> which by default uses C<< "". $_ >> to convert all
+incoming elements to strings.
+
+=cut
+
+sub stringify {
+    my ($src, $code) = @_;
+    $src->map($code // sub { "". $_ })
+}
+
 =head3 Junctions
 
 The following methods collapse the entire sequence into a Boolean value,
