@@ -272,8 +272,8 @@ sub act {
     my ($self, $g) = @_;
     my $new = $self->clone;
     my $cube = $new->[0];
-    my @M = 0 .. (-1 + $cube->squares);
-    $new->@[@M] = $self->@[$g->@[@M]];
+    my @M = 1 .. $cube->squares;
+    $new->@[@M] = $self->@[@$g];
     $new
 }
 
