@@ -16,7 +16,7 @@ sub format_minor {
 
 # Pick the Vamos gaussoid as an example to check the minors function in-depth.
 my $V = CInet::Relation->new(5 => '01111111110111111110111111110111111011111111111011111101111101111011111111011111');
-cmp_deeply [$V->minors(3)->stringify(\&format_minor)->list], set(
+cmp_deeply [$V->minors(3, faces => 1)->stringify(\&format_minor)->list], set(
     '123|: 011111', '123|4: 110111', '123|5: 111101', '123|45: 111111', '124|: 011111', '124|3: 111111', '124|5: 110111', '124|35: 111110',
     '125|: 011111', '125|3: 111011', '125|4: 111111', '125|34: 111101', '134|: 101111', '134|2: 111110', '134|5: 110111', '134|25: 111111',
     '135|: 111110', '135|2: 111011', '135|4: 011111', '135|24: 111111', '145|: 101111', '145|2: 111101', '145|3: 111111', '145|23: 110111',
@@ -24,13 +24,13 @@ cmp_deeply [$V->minors(3)->stringify(\&format_minor)->list], set(
     '245|: 111110', '245|1: 111111', '245|3: 111011', '245|13: 101111', '345|: 111111', '345|1: 110111', '345|2: 111101', '345|12: 011111',
 ), '3-minors of the Vamos gaussoid';
 
-cmp_deeply [$V->minors(4)->stringify(\&format_minor)->list], set(
+cmp_deeply [$V->minors(4, faces => 1)->stringify(\&format_minor)->list], set(
     '1234|: 011111011111111111111110', '1234|5: 111111110111011111101111', '1235|: 011111111110110111111011', '1235|4: 111101111111111111011111',
     '1245|: 011111011111111111111101', '1245|3: 111111111011111011011111', '1345|: 101111011111111110111111', '1345|2: 111111111011101111110111',
     '2345|: 110111111110111111111011', '2345|1: 111111101111101101111111',
 ), '4-minors of the Vamos gaussoid';
 
-cmp_deeply [$V->minors(5)->stringify(\&format_minor)->list], set(
+cmp_deeply [$V->minors(5, faces => 1)->stringify(\&format_minor)->list], set(
     '12345|: 01111111110111111110111111110111111011111111111011111101111101111011111111011111',
 ), '5-minors of the Vamos gaussoid';
 
@@ -42,7 +42,7 @@ my @ELUBF4 = split /\n/, data_file('ELUBF4-list.txt');
 my $count = 0;
 for my $x (@ELUBF4) {
     my $A = CInet::Relation->new(4 => $x);
-    $count++ if all($A->minors(3)->undecorate->stringify->list) eq any(@LUBF3);
+    $count++ if all($A->minors(3)->stringify->list) eq any(@LUBF3);
 }
 is $count, 0+ @LUBF4, 'LUBF4 counts match';
 
@@ -50,7 +50,7 @@ is $count, 0+ @LUBF4, 'LUBF4 counts match';
 my @res;
 for my $x (@ELUBF4) {
     my $A = CInet::Relation->new(4 => $x);
-    push @res, "$A" if none($A->minors(3)->undecorate->stringify->list) eq '111111';
+    push @res, "$A" if none($A->minors(3)->stringify->list) eq '111111';
 }
 cmp_deeply \@res, set(@LUBF4), 'LUBF4 lists match as sets';
 

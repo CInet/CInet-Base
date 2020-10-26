@@ -1,5 +1,10 @@
 Revision history for perl module CInet::Base
 
+v0.9.1 2020-10-26
+
+  - Change CInet::Relation->minors API to return only the relations
+    by default and the faces optionally.
+
 v0.9.0 2020-10-26
 
   - Initial release

@@ -381,22 +381,30 @@ sub embed {
 
 =head3 minors
 
-    my $k_minors = $A->minors($k);
-    my $all_minors = $A->minors;
+    my $k_minors = $A->minors($k, %opts);
+    my $all_minors = $A->minors(%opts);
 
 Return a L<CInet::Seq> object for iterating over all minors of a structure.
 With a given dimension C<$k>, only the minors in that dimension are enumerated.
-The elements of the Seq are arrayref of C<< [ $minor_relation, $face ] >>.
-In this order, the C<$face>, if not desired, can be removed with the
-C<< ->undecorate >> method of Seq.
+
+If C<< $opts{faces} >> is truthy, then the elements of the Seq are decorated
+arrayrefs of C<< [ $minor_relation, $face ] >>. Otherwise (in particular by
+default), the Seq enumerates only the minor C<CInet::Relation> objects.
 
 =cut
 
 sub minors {
-    my ($self, $k) = @_;
+    my $self = shift;
+    my ($k, %opts) = (@_ % 2 == 1 ? @_ : (undef, @_));
+    my $with_faces = $opts{faces};
+
     my $cube = $self->[0];
     my @faces = $cube->faces($k);
-    CInet::Seq::List->new(@faces)->map(sub{ [ $self->minor($_) => $_ ] })
+    CInet::Seq::List->new(@faces)->map(sub{
+        $with_faces ?
+            [ $self->minor($_) => $_ ] :
+            $self->minor($_)
+    })
 }
 
 =head2 Overloaded operators
