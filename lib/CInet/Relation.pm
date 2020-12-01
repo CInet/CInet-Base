@@ -407,6 +407,42 @@ sub minors {
     })
 }
 
+=head3 union
+
+    my $AB = $A->union($B);
+
+Return the union of the two given CI structures. This operation is only
+defined for 0/1-valued relations on the same ground set.
+
+=cut
+
+sub union {
+    my ($A, $B) = @_;
+    my $AB = $A->clone;
+    for my $i (1 .. $AB->$#*) {
+        $AB->[$i] &= $B->[$i];
+    }
+    $AB
+}
+
+=head3 intersect
+
+    my $AB = $A->intersect($B);
+
+Return the intersection of the two given CI structures. This operation is
+only defined for 0/1-valued relations on the same ground set.
+
+=cut
+
+sub intersect {
+    my ($A, $B) = @_;
+    my $AB = $A->clone;
+    for my $i (1 .. $AB->$#*) {
+        $AB->[$i] ||= $B->[$i];
+    }
+    $AB
+}
+
 =head2 Overloaded operators
 
 =head3 Addition
