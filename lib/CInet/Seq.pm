@@ -343,7 +343,7 @@ to see all the elements before they can be certain to return the smallest one.
 sub sort {
     no strict 'refs';
     use Sub::Identify qw(stash_name);
-    use Sort::Key::Natural;
+    use Sort::Key::Natural qw(natkeysort_inplace);
 
     my $self = shift;
     my %arg = @_;
@@ -360,8 +360,8 @@ sub sort {
         } @list;
     }
     else {
-        my $code = $arg{by} // sub { shift };
-        @list = natkeysort { $code->($_) } @list;
+        my $code = $arg{by} // sub { $_[0] };
+        natkeysort_inplace { $code->($_) // '' } @list;
     }
     CInet::Seq::List->new(@list)
 }
