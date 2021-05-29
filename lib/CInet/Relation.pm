@@ -110,6 +110,9 @@ as a string of coefficients, just like one that the L<str> method would
 produce. If this string is not provided, the structure starts out
 completely undefined, that is consisting of all B<*> coefficients.
 
+The character C<< _ >> in the input string is ignored. You can use it to
+separate chunks of the data for human readability.
+
 =cut
 
 sub new {
@@ -118,7 +121,7 @@ sub new {
     my $self = bless [ $cube ], $class;
 
     $A //= '*' x $cube->squares;
-    $self->@[1 .. $cube->squares] = split(//, $A);
+    $self->@[1 .. $cube->squares] = grep { $_ ne '_' } split(//, $A);
 
     $self
 }
