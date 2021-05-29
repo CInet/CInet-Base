@@ -459,7 +459,7 @@ converted (in order) to a hexadecimal digit.
 =cut
 
 sub ID {
-    unpack 'H*', pack 'B*', join '', shift->str
+    unpack 'H*', pack 'B*', shift->str
 }
 
 =head2 Overloaded operators
