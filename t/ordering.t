@@ -7,15 +7,15 @@ use Test::More;
 use Test::Deep;
 
 my $N  = [1 .. 5];
-my $An = CUBE($N);
+my $An = Cube($N);
 
-is $An, CUBE(5), 'caching works';
+is $An, Cube(5), 'caching works';
 is 0+ $An->squares, 80, 'right amount';
 cmp_deeply $An->unpack(2, 13), [[1,3],[2,4]], 'variable no. 13 in dimension 5';
 
 sub faces_txt {
     my ($n, $meth) = @_;
-    join '', map { '['. FACE .']'."\n" } CUBE($n)->$meth
+    join '', map { '['. FACE .']'."\n" } Cube($n)->$meth
 }
 
 # Exhaustive tests for all files from gaussoids.de

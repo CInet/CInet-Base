@@ -6,7 +6,7 @@ CInet::Cube - The ground set of a CInet::Relation
 
 =head1 SYNOPSIS
 
-    my $cube = CUBE(5);  # ground set 1..5
+    my $cube = Cube(5);  # ground set 1..5
 
     # Print the permuted ordering of 2-faces.
     my $p = [4,1,3,5,2];
@@ -297,11 +297,11 @@ sub swap {
 
 =head2 Exports
 
-=head3 CUBE :Export(:DEFAULT)
+=head3 Cube :Export(:DEFAULT)
 
-    my $cube = CUBE($n);
-    my $cube = CUBE($set);
-    my $cube = CUBE($object);
+    my $cube = Cube($n);
+    my $cube = Cube($set);
+    my $cube = Cube($object);
 
 This is not only a shorthand for the C<< CInet::Cube->new >> constructor,
 but it also keeps a cache of cube objects indexed by ground sets and it
@@ -324,7 +324,7 @@ This sub is exported by default.
 
 =cut
 
-# The CUBE sub keeps one instance per ground set around.
+# The Cube sub keeps one instance per ground set around.
 tie my %CUBES, 'CInet::Hash::FaceKey';
 
 sub _get_cube {
@@ -338,7 +338,7 @@ sub _get_cube {
     __PACKAGE__->new($x, @_)
 }
 
-sub CUBE :Export(:DEFAULT) {
+sub Cube :Export(:DEFAULT) {
     my $cube = _get_cube(@_);
     $CUBES{[ $cube->set, [] ]} //= $cube
 }

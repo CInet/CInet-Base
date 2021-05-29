@@ -7,10 +7,10 @@ CInet::Symmetry - Symmetry groups
 =head1 SYNOPSIS
 
     # Food for CInet::Relation's ->act method
-    say $relation->act($_) for HYPEROCTAHEDRAL($relation);
+    say $relation->act($_) for HyperoctahedralGroup($relation);
 
     # or for CInet::Seq symmetry reduction
-    my $mod = $seq->modulo(SYMMETRIC);
+    my $mod = $seq->modulo(SymmetricGroup);
 
 =cut
 
@@ -44,7 +44,7 @@ tie my %HYPEROCTAHEDRALS, 'CInet::Hash::FaceKey';
 
 =pod
 
-All arguments are passed to the C<CUBE> sub from L<CInet::Cube> which
+All arguments are passed to the C<Cube> sub from L<CInet::Cube> which
 interprets it as a cube as described there.
 
 In addition it is possible to not pass any argument at all. In this case,
@@ -53,16 +53,16 @@ specific instance of this symmetry. This is useful when you have a
 L<CInet::Seq> of L<CInet::Relation>s and do not want to repeat the cube
 of these relations when using the C<< ->modulo >> method, like so:
 
-    my $reps = $seq->modulo(SYMMETRIC);
+    my $reps = $seq->modulo(SymmetricGroup);
 
 Refer to the documentation of L<CInet::Seq::Modulo> and other places that
 accept symmetry groups to see if they support this feature.
 
 The following are almost the same:
 
-    my $type = SYMMETRIC;
-    my $type = \&SYMMETRIC;
-    my $type = sub { SYMMETRIC(@_) };
+    my $type = SymmetricGroup;
+    my $type = \&SymmetricGroup;
+    my $type = sub { SymmetricGroup(@_) };
 
 However, in the first case only, the return value is blessed into the
 package C<CInet::Symmetry::Type> which helps other code in CInet figure
@@ -79,18 +79,18 @@ package CInet::Symmetry::Type {
 
 =head2 Exported subs
 
-=head3 SYMMETRIC :Export(:DEFAULT)
+=head3 SymmetricGroup :Export(:DEFAULT)
 
-    my $Sn = SYMMETRIC($cube);
+    my $Sn = SymmetricGroup($cube);
 
 Return a presentation of the symmetric group on the C<$cube>.
 
 =cut
 
-sub SYMMETRIC :Export(:DEFAULT) {
+sub SymmetricGroup :Export(:DEFAULT) {
     return CInet::Symmetry::Type->new(__SUB__) if not @_;
 
-    my $cube = CUBE(@_);
+    my $cube = Cube(@_);
     my $N = $cube->set;
     $SYMMETRICS{[$N, []]} //= do {
         # Take an arrayref permuting $cube->set and lift it to an arrayref
@@ -113,18 +113,18 @@ sub SYMMETRIC :Export(:DEFAULT) {
     }
 }
 
-=head3 TWISTED :Export(:DEFAULT)
+=head3 TwistedGroup :Export(:DEFAULT)
 
-    my $Tn = TWISTED($cube);
+    my $Tn = TwistedGroup($cube);
 
 Return a presentation of the twisted symmetric group on the C<$cube>.
 
 =cut
 
-sub TWISTED :Export(:DEFAULT) {
+sub TwistedGroup :Export(:DEFAULT) {
     return CInet::Symmetry::Type->new(__SUB__) if not @_;
 
-    my $cube = CUBE(@_);
+    my $cube = Cube(@_);
     my $N = $cube->set;
     $TWISTEDS{[$N, []]} //= do {
         my $lift = sub {
@@ -148,18 +148,18 @@ sub TWISTED :Export(:DEFAULT) {
     }
 }
 
-=head3 HYPEROCTAHEDRAL :Export(:DEFAULT)
+=head3 HyperoctahedralGroup :Export(:DEFAULT)
 
-    my $Tn = HYPEROCTAHEDRAL($cube);
+    my $Tn = HyperoctahedralGroup($cube);
 
 Return a presentation of the hyperoctahedral group on the C<$cube>.
 
 =cut
 
-sub HYPEROCTAHEDRAL :Export(:DEFAULT) {
+sub HyperoctahedralGroup :Export(:DEFAULT) {
     return CInet::Symmetry::Type->new(__SUB__) if not @_;
 
-    my $cube = CUBE(@_);
+    my $cube = Cube(@_);
     my $N = $cube->set;
     $HYPEROCTAHEDRALS{[$N, []]} //= do {
         my $lift = sub {

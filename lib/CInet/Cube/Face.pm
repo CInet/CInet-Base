@@ -6,7 +6,7 @@ CInet::Cube::Face - Wrapper class for a CInet::Cube face
 
 =head1 SYNOPSIS
 
-    my $cube = CUBE(5);  # ground set 1..5
+    my $cube = Cube(5);  # ground set 1..5
     say FACE($_) for $cube->squares; # stringifies nicely
 
 =cut

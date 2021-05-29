@@ -5,7 +5,7 @@ use Test::More;
 
 sub to_id {
     my ($n, $str) = @_;
-    CInet::Relation->new(CUBE($n) => $str)->ID
+    CInet::Relation->new(Cube($n) => $str)->ID
 }
 
 is to_id(3 => '0011_00'), '30';

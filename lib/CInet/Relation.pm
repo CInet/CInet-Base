@@ -7,10 +7,10 @@ CInet::Relation - An abstract (local) CI relation
 =head1 SYNOPSIS
 
     # Create a relation from a string representation
-    my $A = CInet::Relation->new(CUBE(5) => '01111111110111111110111111110111111011111111111011111101111101111011111111011111');
+    my $A = CInet::Relation->new(Cube(5) => '01111111110111111110111111110111111011111111111011111101111101111011111111011111');
 
     # Partially defined and oriented structures are supported
-    my $U = CInet::Relation->new(CUBE(4) => '****---0----0---+++++*++');
+    my $U = CInet::Relation->new(Cube(4) => '****---0----0---+++++*++');
 
     # Print all isomorphic relations (with repetition)
     # in the same binary format.
@@ -117,7 +117,7 @@ separate chunks of the data for human readability.
 
 sub new {
     my ($class, $cube, $A) = @_;
-    $cube = CUBE($cube) unless $cube->isa('CInet::Cube');
+    $cube = Cube($cube) unless $cube->isa('CInet::Cube');
     my $self = bless [ $cube ], $class;
 
     $A //= '*' x $cube->squares;
@@ -283,7 +283,7 @@ sub act {
 
 =head3 orbit
 
-    my $seq = $A->orbit(SYMMETRIC);
+    my $seq = $A->orbit(SymmetricGroup);
 
 Return a L<CInet::Seq> instance which enumerates the orbit of the
 invocant under a given symmetric group from L<CInet::Symmetry>.
@@ -300,7 +300,7 @@ sub orbit {
 
 =head3 representative
 
-    my $rep = $A->representative(SYMMETRIC);
+    my $rep = $A->representative(SymmetricGroup);
 
 Return the distinguished representative of the invocant's orbit
 under a given symmetric group from L<CInet::Symmetry>. If a
@@ -333,7 +333,7 @@ obtained by marginalizing to C<I ∪ K> and then conditioning C<K>.
 Equivalently, it contains all the squares which lie on the
 C<< I|K >>-face of the ambient cube. The minor is defined over
 the ground set C<$I>. The required cube object is obtained from
-the C<CUBE> sub.
+the C<Cube> sub.
 
 The opposite of this method is L<embed>.
 
@@ -343,7 +343,7 @@ sub minor {
     my ($self, $face) = @_;
     my $cube = $self->[0];
     my ($I, $L) = @$face;
-    my $Icube = CUBE($I);
+    my $Icube = Cube($I);
     my $new = CInet::Relation->new($Icube);
     for my $ijK ($Icube->squares) {
         my ($ij, $K) = @$ijK;
@@ -372,7 +372,7 @@ sub embed {
     my $cube = $self->[0];
     $face //= [$cube->set, []];
     my ($I, $L) = @$face;
-    my $Mcube = CUBE($M);
+    my $Mcube = Cube($M);
     my $new = CInet::Relation->new($Mcube);
     for my $ijK ($cube->squares) {
         my ($ij, $K) = @$ijK;

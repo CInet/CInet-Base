@@ -6,7 +6,7 @@ CInet::Seq::Modulo - Lazy symmetry reduction on a Seq object
 
 =head1 SYNOPSIS
 
-    my $mod = $seq->modulo(SYMMETRIC);
+    my $mod = $seq->modulo(SymmetricGroup);
 
 =cut
 

@@ -8,9 +8,9 @@ use Test::Deep;
 
 for (3..5) {
     use ntheory qw(factorial);
-    is 0+ SYMMETRIC($_)->@*, factorial($_), "symmetric group on $_";
-    is 0+ TWISTED($_)->@*, 2*factorial($_), "twisted symmetric group on $_";
-    is 0+ HYPEROCTAHEDRAL($_)->@*, 2**$_ * factorial($_), "hyperoctahedral group on $_";
+    is 0+ SymmetricGroup($_)->@*, factorial($_), "symmetric group on $_";
+    is 0+ TwistedGroup($_)->@*, 2*factorial($_), "twisted symmetric group on $_";
+    is 0+ HyperoctahedralGroup($_)->@*, 2**$_ * factorial($_), "hyperoctahedral group on $_";
 }
 
 # Again the test is recreating files from gaussoids.de
@@ -38,20 +38,20 @@ sub orbit_sizes {
 
 # We are not sure if we get the same representatives, but the same
 # number of orbits must appear.
-is gaussoids->modulo(SYMMETRIC)->count,       0+ @modSn, 'symmetric orbit counts match';
-is gaussoids->modulo(TWISTED)->count,         0+ @modTn, 'twisted orbit counts match';
-is gaussoids->modulo(HYPEROCTAHEDRAL)->count, 0+ @modBn, 'hyperoctahedral orbit counts match';
+is gaussoids->modulo(SymmetricGroup)->count,       0+ @modSn, 'symmetric orbit counts match';
+is gaussoids->modulo(TwistedGroup)->count,         0+ @modTn, 'twisted orbit counts match';
+is gaussoids->modulo(HyperoctahedralGroup)->count, 0+ @modBn, 'hyperoctahedral orbit counts match';
 
 # And all the orbit counts must be the same, with multiplicities.
 # The multiplicities add up to the orbit count we tested before.
 # This confirms that ->representative and ->modulo counts are
 # consistent.
-cmp_deeply [orbit_sizes SYMMETRIC],       modbag(@modSn), 'symmetric orbit sizes match';
-cmp_deeply [orbit_sizes TWISTED],         modbag(@modTn), 'twisted orbit sizes match';
-cmp_deeply [orbit_sizes HYPEROCTAHEDRAL], modbag(@modBn), 'hyperoctahedral orbit sizes match';
+cmp_deeply [orbit_sizes SymmetricGroup],       modbag(@modSn), 'symmetric orbit sizes match';
+cmp_deeply [orbit_sizes TwistedGroup],         modbag(@modTn), 'twisted orbit sizes match';
+cmp_deeply [orbit_sizes HyperoctahedralGroup], modbag(@modBn), 'hyperoctahedral orbit sizes match';
 
 # Also test CInet::Seq::Uniq
-is gaussoids->map(sub{ $_->representative(SYMMETRIC) })->uniq->count, 58, 'symmetric orbit size again';
+is gaussoids->map(sub{ $_->representative(SymmetricGroup) })->uniq->count, 58, 'symmetric orbit size again';
 
 done_testing;
 
