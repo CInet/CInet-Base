@@ -10,7 +10,8 @@ CInet::Relation - An abstract (local) CI relation
     my $A = CInet::Relation->new(Cube(5) => '01111111110111111110111111110111111011111111111011111101111101111011111111011111');
 
     # Partially defined and oriented structures are supported
-    my $U = CInet::Relation->new(Cube(4) => '****---0----0---+++++*++');
+    # You may use '_' characters (which are ignored) for readbility
+    my $U = CInet::Relation->new(Cube(4) => '****_---0_----_0---_++++_+*++');
 
     # Print all isomorphic relations (with repetition)
     # in the same binary format.
@@ -118,12 +119,8 @@ separate chunks of the data for human readability.
 sub new {
     my ($class, $cube, $A) = @_;
     $cube = Cube($cube) unless $cube->isa('CInet::Cube');
-    my $self = bless [ $cube ], $class;
-
     $A //= '*' x $cube->squares;
-    $self->@[1 .. $cube->squares] = grep { $_ ne '_' } split(//, $A);
-
-    $self
+    bless [ $cube, $A =~ s/_//gr ], $class
 }
 
 =head3 clone
@@ -160,7 +157,7 @@ taken to hold when it is undefined.
 
 sub ci {
     my ($self, $ijK) = @_;
-    $self->[ $self->[0]->pack($ijK) ] eq 0
+    substr($self->[1], -1 + $self->[0]->pack($ijK), 1) eq 0
 }
 
 =head3 independent
@@ -176,7 +173,8 @@ coefficient is B<0>.
 sub indepenent {
     my $self = shift;
     my $cube = $self->[0];
-    grep { $self->[ $cube->pack($_) ] eq 0 } $self->squares
+    grep { substr($self->[1], -1 + $cube->pack($_), 1) eq 0 }
+        $self->squares
 }
 
 =head3 dependent
@@ -193,7 +191,8 @@ sub dependent {
     use Perl6::Junction qw(any);
     my $self = shift;
     my $cube = $self->[0];
-    grep { $self->[ $cube->pack($_) ] eq any('1', '+', '-') } $self->squares
+    grep { substr($self->[1], -1 + $cube->pack($_), 1) eq any('1', '+', '-') }
+        $self->squares
 }
 
 =head3 permute
@@ -208,14 +207,11 @@ of the invocant's squares under the C<< $cube->permute >> method.
 
 sub permute {
     my ($self, $p) = @_;
-    my $new = $self->clone;
-    my $cube = $new->[0];
-    for my $ijK ($cube->squares) {
-        my $i = $cube->pack($ijK);
-        my $j = $cube->pack($cube->permute($p => $ijK));
-        $new->[$j] = $self->[$i];
-    }
-    $new
+    my $cube = $self->[0];
+    my @y = map {
+        $cube->pack($cube->permute($p => $_))
+    } $cube->squares;
+    $self->invact(\@y)
 }
 
 =head3 dual
@@ -230,14 +226,11 @@ C<< $cube->dual >> method.
 
 sub dual {
     my $self = shift;
-    my $new = $self->clone;
-    my $cube = $new->[0];
-    for my $ijK ($cube->squares) {
-        my $i = $cube->pack($ijK);
-        my $j = $cube->pack($cube->dual($ijK));
-        $new->[$j] = $self->[$i];
-    }
-    $new
+    my $cube = $self->[0];
+    my @y = map {
+        $cube->pack($cube->dual($_))
+    } $cube->squares;
+    $self->invact(\@y)
 }
 
 =head3 swap
@@ -252,14 +245,11 @@ invocant's squares under the C<< $cube->swap >> method.
 
 sub swap {
     my ($self, $Z) = @_;
-    my $new = $self->clone;
-    my $cube = $new->[0];
-    for my $ijK ($cube->squares) {
-        my $i = $cube->pack($ijK);
-        my $j = $cube->pack($cube->swap($Z => $ijK));
-        $new->[$j] = $self->[$i];
-    }
-    $new
+    my $cube = $self->[0];
+    my @y = map {
+        $cube->pack($cube->swap($Z => $_))
+    } $cube->squares;
+    $self->invact(\@y)
 }
 
 =head3 act
@@ -267,18 +257,39 @@ sub swap {
     my $Ag = $A->act($g);
 
 Apply a permutation C<$g> of the array C<< $cube->squares >> to the
-relation. All groups in L<CInet::Symmetry> are implement in this form.
+relation. All groups in L<CInet::Symmetry> are implemented in this form.
 The returned structure exists over the same cube.
 
 =cut
 
 sub act {
     my ($self, $g) = @_;
-    my $new = $self->clone;
-    my $cube = $new->[0];
-    my @M = 1 .. $cube->squares;
-    $new->@[@M] = $self->@[@$g];
-    $new
+    my $cube = $self->[0];
+    my @x = ('.', split //, $self->[1]);
+
+    CInet::Relation->new($cube =>
+        CORE::join('', @x[@$g])
+    )
+}
+
+=head3 invact
+
+    my $Ag = $A->invact($g);
+
+Like L<#act> but applies the inverse permutation.
+
+=cut
+
+sub invact {
+    my ($self, $g) = @_;
+    my $cube = $self->[0];
+    my @x = split //, $self->[1];
+    my @y; @y[@$g] = @x;
+    shift @y; # $g is 1-based, remove excess element
+
+    CInet::Relation->new($cube =>
+        CORE::join('', @y)
+    )
 }
 
 =head3 orbit
@@ -349,7 +360,7 @@ sub minor {
         my ($ij, $K) = @$ijK;
         my $j = $Icube->pack($ijK);
         my $i = $cube->pack([ $ij, set_union($K, $L) ]);
-        $new->[$j] = $self->[$i];
+        substr($new->[1], $j-1, 1) = substr($self->[1], $i-1, 1);
     }
     $new
 }
@@ -378,7 +389,7 @@ sub embed {
         my ($ij, $K) = @$ijK;
         my $i = $cube->pack($ijK);
         my $j = $Mcube->pack([ $ij, set_union($K, $L) ]);
-        $new->[$j] = $self->[$i];
+        substr($new->[1], $j-1, 1) = substr($self->[1], $i-1, 1);
     }
     $new
 }
@@ -421,11 +432,12 @@ defined for 0/1-valued relations on the same ground set.
 =cut
 
 sub union {
+    use List::UtilsBy qw(zip_by);
     my ($A, $B) = @_;
     my $AB = $A->clone;
-    for my $i (1 .. $AB->$#*) {
-        $AB->[$i] &= $B->[$i];
-    }
+    my @x = split //, $A->[1];
+    my @y = split //, $B->[1];
+    $AB->[1] = CORE::join '', zip_by { $_[0] && $_[1] } \@x, \@y;
     $AB
 }
 
@@ -439,11 +451,12 @@ only defined for 0/1-valued relations on the same ground set.
 =cut
 
 sub intersect {
+    use List::UtilsBy qw(zip_by);
     my ($A, $B) = @_;
     my $AB = $A->clone;
-    for my $i (1 .. $AB->$#*) {
-        $AB->[$i] ||= $B->[$i];
-    }
+    my @x = split //, $A->[1];
+    my @y = split //, $B->[1];
+    $AB->[1] = CORE::join '', zip_by { $_[0] || $_[1] } \@x, \@y;
     $AB
 }
 
@@ -462,7 +475,7 @@ converted (in order) to a hexadecimal digit.
 =cut
 
 sub ID {
-    unpack 'H*', pack 'B*', shift->str
+    unpack 'H*', pack 'B*', shift->[1]
 }
 
 =head2 Overloaded operators
@@ -484,11 +497,7 @@ sub join {
     my ($R, $S, $swap) = @_;
     ($R, $S) = ($S, $R) if $swap;
     my $T = $R->clone;
-    for my $i (keys @$R) {
-        next unless $i;
-        ...
-    }
-    $T
+    ...
 }
 
 =head3 Multiplication
@@ -508,11 +517,7 @@ sub meet {
     my ($R, $S, $swap) = @_;
     ($R, $S) = ($S, $R) if $swap;
     my $T = $R->clone;
-    for my $i (keys @$R) {
-        next unless $i;
-        ...
-    }
-    $T
+    ...
 }
 
 =head3 Stringification
@@ -527,8 +532,7 @@ via the proper ordering of squares documented in L<CInet::Cube>.
 =cut
 
 sub str {
-    my $self = shift;
-    CORE::join '', $self->@[1 .. $self->$#*]
+    shift->[1]
 }
 
 =head2 AUTOLOAD

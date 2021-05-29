@@ -5,6 +5,7 @@ requires 'List::Util';
 
 requires 'Scalar::Util';
 requires 'List::SomeUtils';
+requires 'List::UtilsBy';
 requires 'Export::Attrs';
 requires 'Sub::Identify';
 requires 'Import::Into';
