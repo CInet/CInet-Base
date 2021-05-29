@@ -1,5 +1,11 @@
 Revision history for perl module CInet::Base
 
+v0.9.3 2021-05-29
+
+  - Prefer CamelCase over ALLCAPS for naming free-standing functions.
+  - Change internal layout of CInet::Relation, improving performance.
+  - Some new methods.
+
 v0.9.2 2020-10-26
 
   - Move cube extraction effort into CUBE sub.

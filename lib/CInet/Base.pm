@@ -11,14 +11,14 @@ CInet::Base - The basis for computations on CI structures
 
 =head2 VERSION
 
-This document describes CInet::Base v0.9.2.
+This document describes CInet::Base v0.9.3.
 
 =cut
 
 # ABSTRACT: The basis for computations on CI structures
 package CInet::Base;
 
-our $VERSION = "v0.9.2";
+our $VERSION = "v0.9.3";
 
 =head1 DESCRIPTION
 
