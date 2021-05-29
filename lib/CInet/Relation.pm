@@ -23,6 +23,7 @@ CInet::Relation - An abstract (local) CI relation
 package CInet::Relation;
 
 use Modern::Perl 2018;
+use Scalar::Util qw(blessed);
 use Carp;
 
 use CInet::Cube;
@@ -290,7 +291,7 @@ with C<< $A->cube >>.
 
 sub orbit {
     my ($self, $group) = @_;
-    $group = $group->($self) if $group->isa('CInet::Symmetry::Type');
+    $group = $group->($self) if blessed($group) and $group->isa('CInet::Symmetry::Type');
     CInet::Seq::List->new(@$group)->map(sub{ $self->act($_) })
 }
 
@@ -316,7 +317,7 @@ smallest stringification.
 sub representative {
     use List::Util qw(minstr);
     my ($self, $group) = @_;
-    $group = $group->($self) if $group->isa('CInet::Symmetry::Type');
+    $group = $group->($self) if blessed($group) and $group->isa('CInet::Symmetry::Type');
     minstr map { $self->act($_) } @$group
 }
 
