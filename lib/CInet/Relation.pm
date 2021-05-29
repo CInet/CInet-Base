@@ -443,6 +443,24 @@ sub intersect {
     $AB
 }
 
+=head3
+
+    my $ID = $A->ID;
+
+Returns the ID of a 0/1-valued relation. This is a hexadecimal rendering
+of the bit string. The ID is of fixed length (depending on the ground set),
+printable and preserves the CI structure entirely, except for the labeling
+on its ground set.
+
+Each chunk of four bits (most significant bit first) in C<< $A->str >> is
+converted (in order) to a hexadecimal digit.
+
+=cut
+
+sub ID {
+    unpack 'H*', pack 'B*', join '', shift->str
+}
+
 =head2 Overloaded operators
 
 =head3 Addition
