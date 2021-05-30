@@ -29,7 +29,7 @@ use Algorithm::Combinatorics qw(subsets permutations);
 This module implements common symmetry groups acting on L<CInet::Relation>
 objects. All groups are implemented and interfaced in a similar fashion.
 
-For each group, there is an ALLCAPS sub which is exported by default.
+For each group, there is a free-standing sub which is exported by default.
 This sub returns a permutation presentation of the group which can be
 passed to L<CInet::Relation>'s C<< ->act >> method or to L<CInet::Seq>'s
 C<< ->modulo >> adapter. In addition, these subs keep a cache of group
