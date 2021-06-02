@@ -143,6 +143,20 @@ sub cube {
     shift->[0]
 }
 
+=head3 cival :lvalue
+
+    say $A->cival($ijK);    # 1 - dependent
+    $A->cival($ijK) = '+';  # orient positively
+
+Return or set the "coefficient" of a given square C<$ijK>.
+
+=cut
+
+sub cival :lvalue {
+    my ($self, $ijK) = @_;
+    substr($self->[1], -1 + $self->[0]->pack($ijK), 1)
+}
+
 =head3 ci
 
     say $A->ci($ijK) ? "independent" : "dependent";
@@ -156,13 +170,13 @@ taken to hold when it is undefined.
 =cut
 
 sub ci {
-    my ($self, $ijK) = @_;
-    substr($self->[1], -1 + $self->[0]->pack($ijK), 1) eq 0
+    my $self = shift;
+    $self->value(@_) eq 0
 }
 
-=head3 independent
+=head3 independences
 
-    my @indeps = $A->independent;
+    my @indeps = $A->independences;
 
 Return all independence statements that hold for the relation, as a list
 of C<< $cube->squares >> objects. These are all squares for which the
@@ -170,16 +184,16 @@ coefficient is B<0>.
 
 =cut
 
-sub indepenent {
+sub independences {
     my $self = shift;
     my $cube = $self->[0];
     grep { substr($self->[1], -1 + $cube->pack($_), 1) eq 0 }
-        $self->squares
+        $cube->squares
 }
 
-=head3 dependent
+=head3 dependences
 
-    my @deps = $A->dependent;
+    my @deps = $A->dependences;
 
 Return all dependence statements that hold for the relation, as a list
 of C<< $cube->squares >> objects. A statement with coefficient B<1>,
@@ -187,12 +201,12 @@ B<+> or B<-> is dependent.
 
 =cut
 
-sub dependent {
+sub dependences {
     use Perl6::Junction qw(any);
     my $self = shift;
     my $cube = $self->[0];
     grep { substr($self->[1], -1 + $cube->pack($_), 1) eq any('1', '+', '-') }
-        $self->squares
+        $cube->squares
 }
 
 =head3 permute
