@@ -7,7 +7,7 @@ CInet::Symmetry - Symmetry groups
 =head1 SYNOPSIS
 
     # Food for CInet::Relation's ->act method
-    say $relation->act($_) for HyperoctahedralGroup($relation);
+    say $relation->act($_) for HyperoctahedralGroup($relation)->@*;
 
     # or for CInet::Seq symmetry reduction
     my $mod = $seq->modulo(SymmetricGroup);
@@ -150,7 +150,7 @@ sub TwistedGroup :Export(:DEFAULT) {
 
 =head3 HyperoctahedralGroup :Export(:DEFAULT)
 
-    my $Tn = HyperoctahedralGroup($cube);
+    my $Bn = HyperoctahedralGroup($cube);
 
 Return a presentation of the hyperoctahedral group on the C<$cube>.
 

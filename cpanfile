@@ -20,4 +20,5 @@ on 'test' => sub {
     requires 'ntheory';
     requires 'Test::More';
     requires 'Test::Deep';
+    requires 'Devel::Gladiator';
 };
