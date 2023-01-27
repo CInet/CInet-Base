@@ -20,7 +20,8 @@ use Export::Attrs;
 use Carp;
 
 use overload (
-    q[""] => \&_str,
+    q[""]  => \&_str,
+    q[cmp] => \&_cmp,
 );
 
 =head1 DESCRIPTION
@@ -42,9 +43,18 @@ returned.
 
 =cut
 
+# Users can rely on stringifications of this object to produce
+# a "normal" version of the face: we order the I and K parts.
+# For efficiency reasons, this is not guaranteed by operations
+# in CInet::Cube (such as ->permute) because the usual consumer
+# of faces, which is ->pack, normalizes in its own way.
+sub _normalize {
+    [ map { [sort @$_] } shift->@* ]
+}
+
 sub new {
     my ($class, $face) = @_;
-    bless $face, $class
+    bless _normalize($face), $class
 }
 
 =head3 I
@@ -101,6 +111,12 @@ only use single-letter names for cube axes.
 sub _str {
     my $self = shift;
     sprintf "%s|%s", join('', $self->I), join('', $self->K)
+}
+
+sub _cmp {
+    my ($x, $y, $swap) = @_;
+    ($x, $y) = ($y, $x) if $swap;
+    "$x" cmp "$y"
 }
 
 =head2 Exports

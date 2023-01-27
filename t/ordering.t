@@ -33,6 +33,9 @@ is faces_txt(5, 'vertices'), data_file('vertices5.txt'), 'ordering of 5-vertices
 is faces_txt(6, 'vertices'), data_file('vertices6.txt'), 'ordering of 6-vertices';
 is faces_txt(7, 'vertices'), data_file('vertices7.txt'), 'ordering of 7-vertices';
 
+# The FACE constructor normalizes faces
+is FACE([[1,2],[3,4,5]]), FACE([[2,1],[5,3,4]]), 'FACE normalizes';
+
 done_testing;
 
 __DATA__
