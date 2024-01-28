@@ -243,7 +243,7 @@ sub _index {
     my $self = shift;
     my @indices = map {
         my $x = $_;
-        firstidx { $x == $_ } $self->{set}->@*
+        firstidx { $x eq $_ } $self->{set}->@*
     } @_;
     confess "could not find some of the elements [@{[ join(', ', @_) ]}] "
         . " over ground set @{[ join('', $self->{set}->@*) ]}"
