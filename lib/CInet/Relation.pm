@@ -381,12 +381,14 @@ sub minor {
 
 =head3 embed
 
-    my $A = $a->embed($IK);
+    my $A = $a->embed($M, $NL);
 
-When the invocant is a structure over ground set C<$I> and given a
-face C<[$I, $K]> of a larger cube over C<$N>, this method produces
-a new structure over C<$N> which contains the invocant's squares
-embedded into the C<< I|K >>-face and nothing else.
+When the invocant is a structure over ground set C<$N> and given a
+larger ground set C<$M> and a face C<[$N, $L]> of the cube over C<$M>,
+this method produces a new structure over C<$M> which contains the
+invocant's squares embedded into the C<< N|L >>-face and nothing else.
+
+The C<$NL> argument is optional and defaults to C<< N|Ø >>.
 
 The opposite of this method is L<minor>.
 
@@ -396,14 +398,14 @@ sub embed {
     my ($self, $M, $face) = @_;
     my $cube = $self->[0];
     $face //= [$cube->set, []];
-    my ($I, $L) = @$face;
+    my ($N, $L) = @$face;
     my $Mcube = Cube($M);
     my $new = CInet::Relation->new($Mcube);
     for my $ijK ($cube->squares) {
         my ($ij, $K) = @$ijK;
-        my $i = $cube->pack($ijK);
-        my $j = $Mcube->pack([ $ij, set_union($K, $L) ]);
-        substr($new->[1], $j-1, 1) = substr($self->[1], $i-1, 1);
+        my $x = $cube->pack($ijK);
+        my $y = $Mcube->pack([ $ij, set_union($K, $L) ]);
+        substr($new->[1], $y-1, 1) = substr($self->[1], $x-1, 1);
     }
     $new
 }
