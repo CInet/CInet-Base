@@ -476,7 +476,7 @@ sub intersect {
     $AB
 }
 
-=head3
+=head3 ID
 
     my $ID = $A->ID;
 
