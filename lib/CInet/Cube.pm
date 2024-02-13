@@ -144,8 +144,9 @@ When specific dimensions are asked for in the arguments to this method, only
 these faces are returned.
 
 Each cube object computes the array of d-dimensional faces only on demand.
-Once computed, the array is cached. Other methods besides L<#faces> which
-can cause the face array to be reified are L<#pack> and L<#unpack>.
+Once computed, the array is cached. Other methods besides L<faces|/"faces">
+which can cause the face array to be reified are L<pack|/"pack"> and
+L<unpack|/"unpack">.
 
 =cut
 
@@ -210,8 +211,8 @@ sub pack {
 
     my $face = $cube->unpack($d => $nr);
 
-The opposite of the L<#pack> method, takes a dimension and 1-based position
-number and returns the corresponding face object, or dies.
+The opposite of the L<pack|/"pack"> method, takes a dimension and 1-based
+position number and returns the corresponding face object, or dies.
 
 =cut
 
@@ -267,7 +268,7 @@ sub permute {
 The cube has a distinguished symmetry by which all mirror symmetries are
 applied simultaneously. This is referred to as I<duality>.
 
-This is the same as calling L<#swap> with C<< $Z = $cube->set >>.
+This is the same as calling L<swap|/"swap"> with C<< $Z = $cube->set >>.
 
 =cut
 
@@ -285,7 +286,7 @@ sub dual {
 For each subset C<$Z> of the axes of the cube, there is a mirror symmetry
 which applies simultaneously all the reflections orthogonal to each axis
 in C<$Z>. This is called I<swapping> and it generalizes the operation of
-L<#dual>.
+L<dual|/"dual">.
 
 =cut
 
@@ -313,7 +314,7 @@ tries harder to extract a cube from its input arguments:
 
 =item If the argument has a C<cube> method, return that value.
 
-=item Otherwise pass all arguments to the L<#new> constructor.
+=item Otherwise pass all arguments to the L<new|/"new"> constructor.
 
 =back
 

@@ -115,11 +115,11 @@ sub count {
 Return the first element of the sequence for which the coderef evaluates
 to a truthy value, or C<undef> if the sequence is exhausted while looking
 for such an element. This is implemented via C<< ->grep(\&code)->next >>.
-See L<#grep> for details about the coderef.
+See L<grep|/"grep"> for details about the coderef.
 
 If the coderef is not given, C<< sub{ 1 } >> is used, effectively returning
 the B<first> unconsumed element of the sequence. As a special case of
-L<#grep>, this is a relatively costly way of writing C<< ->next >>.
+L<grep|/"grep">, this is a relatively costly way of writing C<< ->next >>.
 
 =cut
 
@@ -234,7 +234,7 @@ sub reduce {
     my $strseq = $seq->stringify;
     my $strseq = $seq->stringify(\&stringifier);
 
-This is a L<#map> which by default uses C<< "". $_ >> to convert all
+This is a L<map|/"map"> which by default uses C<< "". $_ >> to convert all
 incoming elements to strings.
 
 =cut
@@ -255,8 +255,8 @@ they iterate the whole sequence:
     my $satisfiable = $seq->any(\&code);
 
 Return whether the coderef evaluates to a truthy value for B<any> of
-the sequence elements. This calls L<#first> internally, so refer to
-its documentation as well.
+the sequence elements. This calls L<first|/"first"> internally, so refer
+to its documentation as well.
 
 This method stops the iteration over C<$seq> when the first witness
 making the coderef truthy is found.
@@ -273,8 +273,8 @@ sub any {
     my $unsatisfiable = $seq->none(\&code);
 
 Return whether the coderef evaluates to a truthy value for B<none> of
-the sequence elements. This calls L<#first> internally, so refer to
-its documentation as well.
+the sequence elements. This calls L<first|/"first"> internally, so refer
+to its documentation as well.
 
 This method stops the iteration over C<$seq> when the first witness
 making the coderef truthy is found.
@@ -291,8 +291,8 @@ sub none {
     my $tautology = $seq->all(\&code);
 
 Return whether the coderef evaluates to a truthy value for B<all> of
-the sequence elements. This calls L<#first> internally, so refer to
-its documentation as well.
+the sequence elements. This calls L<first|/"first"> internally, so refer
+to its documentation as well.
 
 This method stops the iteration over C<$seq> when the first witness
 making the coderef falsy is found.
@@ -375,7 +375,7 @@ the value C<< [$elt, &code($elt)] >>, that is an arrayref of the original
 value and whatever is added by the coderef.
 
 This method aids in Schwartzian transforms of a sequence.
-Its opposite is L<#undecorate>.
+Its opposite is L<undecorate|/"undecorate">.
 
 =cut
 
@@ -391,10 +391,10 @@ sub decorate {
     my $tidied = $seq->undecorate(\&tidier);
 
 This method aids in Schwartzian transforms of a sequence.
-Its opposite is L<#decorate>.
+Its opposite is L<decorate|/"decorate">.
 
-It is just a L<#map> with a default coderef of C<< sub { shift->[0] } >>
-assuming that it undecorates a sequence formatted by L<#decorate>.
+It is just a L<map|/"map"> with a default coderef of C<< sub { shift->[0] } >>
+assuming that it undecorates a sequence formatted by L<decorate|/"decorate">.
 If the incoming elements are decorated value compounds of a different
 format, pass your own coderef. It can either refer to its first argument
 or the dynamically scoped topic C<$_>.

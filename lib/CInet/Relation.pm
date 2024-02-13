@@ -107,8 +107,8 @@ use overload (
 Create a new CInet::Relation object. The first argument is the mandatory
 L<CInet::Cube> instance which provides the ground set of the relation.
 The second argument is an optional string that gives the exact CI structure
-as a string of coefficients, just like one that the L<str> method would
-produce. If this string is not provided, the structure starts out
+as a string of coefficients, just like one that the L<str|/"str"> method
+would produce. If this string is not provided, the structure starts out
 completely undefined, that is consisting of all B<*> coefficients.
 
 The character C<< _ >> in the input string is ignored. You can use it to
@@ -290,7 +290,7 @@ sub act {
 
     my $Ag = $A->invact($g);
 
-Like L<#act> but applies the inverse permutation.
+Like L<act|/"act"> but applies the inverse permutation.
 
 =cut
 
@@ -360,7 +360,7 @@ C<< I|K >>-face of the ambient cube. The minor is defined over
 the ground set C<$I>. The required cube object is obtained from
 the C<Cube> sub.
 
-The opposite of this method is L<embed>.
+The opposite of this method is L<embed|/"embed">.
 
 =cut
 
@@ -390,7 +390,7 @@ invocant's squares embedded into the C<< N|L >>-face and nothing else.
 
 The C<$NL> argument is optional and defaults to C<< N|Ø >>.
 
-The opposite of this method is L<minor>.
+The opposite of this method is L<minor|/"minor">.
 
 =cut
 
