@@ -4,6 +4,7 @@ requires 'Clone';
 requires 'List::Util';
 
 requires 'Scalar::Util';
+requires 'Sentinel';
 requires 'List::SomeUtils';
 requires 'List::UtilsBy';
 requires 'Export::Attrs';

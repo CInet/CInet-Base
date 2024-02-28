@@ -29,6 +29,8 @@ use Export::Attrs;
 use Carp;
 
 use CInet::Cube;
+use Sentinel;
+use List::Util qw(uniqstr);
 use Array::Set qw(set_union);
 
 use Clone qw(clone);
@@ -37,8 +39,11 @@ use Clone qw(clone);
 
 C<CInet::Relation> is the main object of interest of this distribution.
 It represents an abstract CI relation (or CI structure), that is a
-collection of local conditional independence statements C<< (ij|K) >>,
-potentially with abstract coefficients.
+collection of local or elementary conditional independence statements
+C<< (ij|K) >>, potentially with abstract coefficients. Some methods also
+deal with global or non-elementary CI statements of the form C<< (A,B|C) >>,
+but the CI structure is represented in the local mode assuming semigraphhoid
+semantics; cf. L<cival|/"cival"> for details.
 
 Each relation requires a domain in the form of a L<CInet::Cube> to be
 attached to it, which provides access to the ground set of the relation.
@@ -105,24 +110,37 @@ use overload (
 
     my $A = CInet::Relation->new($cube);
     my $A = CInet::Relation->new($cube => '111010001...');
+    my $A = CInet::Relation->new($cube => [[1,2],[3]], [[1,5],[2]], ...);
 
 Create a new CInet::Relation object. The first argument is the mandatory
 L<CInet::Cube> instance which provides the ground set of the relation.
+
 The second argument is an optional string that gives the exact CI structure
 as a string of coefficients, just like one that the L<str|/"str"> method
 would produce. If this string is not provided, the structure starts out
 completely undefined, that is consisting of all B<*> coefficients.
-
 The character C<< _ >> in the input string is ignored. You can use it to
 separate chunks of the data for human readability.
+
+Alternatively, the CI structure can be specified by giving a list of
+CI statements which should hold. These are either encoded as arrayrefs
+with two elements (denoting an elementary CI statement C<ij|K>, or a
+2-face of C<$cube>) or an arrayref with three elements (denoting a
+non-elementary CI statement C<A,B|C>).
 
 =cut
 
 sub new {
-    my ($class, $cube, $A) = @_;
-    $cube = Cube($cube) unless $cube->isa('CInet::Cube');
-    $A //= '*' x $cube->squares;
-    bless [ $cube, $A =~ s/_//gr ], $class
+    my ($class, $cube, @args) = @_;
+    $cube = Cube($cube) unless blessed($cube) and $cube->isa('CInet::Cube');
+    if (not @args or not ref($args[0])) {
+        my $s = shift(@args) // '*' x $cube->squares;
+        return bless [ $cube, $s =~ s/_//gr ], $class;
+    }
+    my $s = '*' x $cube->squares;
+    my $A = bless [ $cube, $s ], $class;
+    $A->cival($_) = 0 for @args;
+    $A
 }
 
 =head3 clone
@@ -152,19 +170,42 @@ sub cube {
 
 Return or set the "coefficient" of a given square C<$ijK>.
 
+This method can also be used with a non-elementary CI statement C<< (A,B|C) >>
+in which case it sets all associated elementary CI statements to the given value.
+If the value of a non-elementary CI statement is read, then all associated
+elementary CI statements are read first. If they all have the same value,
+that value is returned. Otherwise the value is C<1>. See L<CInet::Cube|CInet::Cube/"squares">
+for more information about the encoding of non-elementary CI statements.
+
 =cut
 
 sub cival :lvalue {
-    my ($self, $ijK) = @_;
-    substr($self->[1], -1 + $self->[0]->pack($ijK), 1)
+    my ($self, $stmt) = @_;
+    my $cube = $self->[0];
+    if (@$stmt == 2) {
+        return substr($self->[1], -1 + $cube->pack($stmt), 1);
+    }
+    elsif (@$stmt == 3) {
+        return sentinel
+            get => sub {
+                my @vals = uniqstr map { substr($self->[1], -1 + $cube->pack($_), 1) } $cube->squares($stmt);
+                @vals == 1 ? $vals[0] : 1
+            },
+            set => sub {
+                substr($self->[1], -1 + $cube->pack($_), 1) = $_[0] for $cube->squares($stmt);
+            };
+    }
+    else {
+        die 'unsupported argument format';
+    }
 }
 
 =head3 ci
 
     say $A->ci($ijK) ? "independent" : "dependent";
 
-Given a square C<$ijK>, return whether its corresponding CI statement
-holds in the relation.
+Given a square C<$ijK> or a non-elementary CI statement, return whether
+its corresponding CI statement holds in the relation.
 
 The statement holds if and only if its coefficient is B<0>. It is not
 taken to hold when it is undefined.

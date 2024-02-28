@@ -182,8 +182,54 @@ sub edges {
     shift->faces(1)
 }
 
+=head3 squares
+
+    # Get all squares in cube
+    my @squares = $cube->squares;
+
+    # Convert global to local CI statements
+    my @elems = $cube->squares([[1,2],[3,4],[5,6,7]]);
+    my @shorter = $cube->squares([[1,2],[3,4],[5,6,7]], graphoid => 1);
+
+This method, if called with no arguments, returns all squares in the
+invocant C<$cube>.
+
+An alternate use is to get all the local (or elementary) CI statements
+corresponding to a global (or non-elementary) CI statement. By default,
+semigraphoid semantics apply. That is, C<< (A,B|C) >> is translated into
+the elementary statements of the form C<< (ab|D) >> where C<a ∈ A>,
+C<b ∈ B> and C<C ⊆ D ⊆ ABC \ ab>.
+
+Setting the C<graphoid> option to a true value instead uses the more
+compact graphoid semantics where C<< (A,B|C) >> is translated into
+C<< (ab|C) >> with C<a ∈ A> and C<b ∈ B>.
+
+=cut
+
 sub squares {
-    shift->faces(2)
+    my $self = shift;
+    return $self->faces(2) if not @_;
+
+    my ($X, $Y, $Z) = shift->@*;
+    my %opts = @_;
+    my @squares;
+    if ($opts{graphoid}) {
+        for my $x (@$X) {
+            for my $y (@$Y) {
+                push @squares, [[$x,$y],$Z];
+            }
+        }
+    }
+    else {
+        for my $x (@$X) {
+            for my $y (@$Y) {
+                for my $W (subsets(set_diff([@$X, @$Y], [$x,$y]))) {
+                    push @squares, [[$x,$y],[@$W, @$Z]];
+                }
+            }
+        }
+    }
+    @squares
 }
 
 =head3 pack
