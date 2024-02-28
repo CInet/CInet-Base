@@ -25,6 +25,7 @@ package CInet::Relation;
 
 use Modern::Perl 2018;
 use Scalar::Util qw(blessed);
+use Export::Attrs;
 use Carp;
 
 use CInet::Cube;
@@ -585,6 +586,23 @@ sub AUTOLOAD {
         EOF
     undef
 }
+
+=head2 Exports
+
+=head3 CIR :Export(:DEFAULT)
+
+    my $A = CIR(@args);
+
+This is a shorthand for the C<< CInet::Relation->new >> constructor.
+
+This sub is exported by default.
+
+=cut
+
+sub CIR :Export(:DEFAULT) {
+    CInet::Relation->new(@_)
+}
+
 
 =head1 AUTHOR
 
