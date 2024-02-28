@@ -95,6 +95,7 @@ use overload (
     q[+]  => \&join,
     q[*]  => \&meet,
     q[""] => \&str,
+    q[cmp] => \&str_cmp,
 );
 
 =head2 Methods
@@ -536,19 +537,28 @@ sub meet {
     ...
 }
 
-=head3 Stringification
+=head3 Stringification and string comparison
 
     say $A;  # 11101001...
+    say $A eq $B; # compare
 
-Return a string representing the CI structure. The string contains
-C<< $cube->squres >>-many symbols from the coefficient alphabet B<0>,
-B<1>, B<+>, B<->, B<*>. Each symbol corresponds to a CI statement
-via the proper ordering of squares documented in L<CInet::Cube>.
+The string representing the CI structure contains C<< $cube->squres >>-many
+symbols from the coefficient alphabet B<0>, B<1>, B<+>, B<->, B<*>.
+Each symbol corresponds to a CI statement via the proper ordering of squares
+documented in L<CInet::Cube>.
+
+String comparison functions automatically use the stringification.
 
 =cut
 
 sub str {
     shift->[1]
+}
+
+sub str_cmp {
+    my ($R, $S, $swap) = @_;
+    ($R, $S) = ($S, $R) if $swap;
+    "$R" cmp "$S"
 }
 
 =head2 AUTOLOAD
