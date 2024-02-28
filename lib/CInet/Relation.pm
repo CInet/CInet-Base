@@ -171,7 +171,7 @@ taken to hold when it is undefined.
 
 sub ci {
     my $self = shift;
-    $self->value(@_) eq 0
+    $self->cival(@_) eq 0
 }
 
 =head3 independences
