@@ -547,7 +547,7 @@ Returns a human-readable description of the object.
 
 sub description {
     my $self = shift;
-    'Relation ' . "$self" . ' over ' . $self->cube->description
+    'Relation ' . "<$self>" . ' over ' . $self->cube->description
 }
 
 =head2 Overloaded operators
