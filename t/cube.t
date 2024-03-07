@@ -12,4 +12,8 @@ is $cube->pack([ ['a','b'], ['c','d'] ]), 4, 'letters in ground set work with pa
 cmp_deeply $cube->permute(['c', 'd', 'a', 'b'] => [ ['a','b'], ['c','d'] ]), [ ['c', 'd'], ['a','b']],
     'letters in ground set with work permute';
 
+tie my %faces, 'CInet::Hash::FaceKey';
+$faces{[[2,1],[5,3,4]]}++;
+cmp_deeply [keys %faces], [[[1,2],[3,4,5]]], 'FaceKey packs and unpacks with set semantics';
+
 done_testing;

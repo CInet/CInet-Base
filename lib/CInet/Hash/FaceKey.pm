@@ -58,7 +58,7 @@ sub unpack_face {
 	my $key = shift;
     my ($n, $i) = unpack 'NN', $key;
     my $IK = [ unpack 'x4x4' . ('w/a*' x $n), $key ];
-    [ $IK->@[0 .. $i-1], $IK->@[$i .. $IK->$#*] ]
+    [ [$IK->@[0 .. $i-1]], [$IK->@[$i .. $IK->$#*]] ]
 }
 
 sub TIEHASH {
