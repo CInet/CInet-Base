@@ -342,6 +342,19 @@ sub swap {
     [ $I, set_symdiff($K, set_diff($Z, $I)) ]
 }
 
+=head3 description
+
+    my $str = $cube->description;
+
+Returns a human-readable description of the object.
+
+=cut
+
+sub description {
+    my $set = shift->set;
+    'Cube on [' . join(',', @$set) . ']'
+}
+
 =head2 Exports
 
 =head3 Cube :Export(:DEFAULT)

@@ -54,6 +54,18 @@ sub new {
     bless [ @_ ], $class
 }
 
+=head3 description
+
+    my $str = $seq->description;
+
+=cut
+
+sub description {
+    use Scalar::Util qw(blessed);
+    my $self = shift;
+    'Materialized sequence of type ' . blessed($self) . ' and size ' . $self->count
+}
+
 =head2 Implementation of CInet::Seq
 
 =head3 next

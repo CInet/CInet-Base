@@ -537,6 +537,19 @@ sub ID {
     unpack 'H*', pack 'B*', shift->[1]
 }
 
+=head3 description
+
+    my $str = $A->description;
+
+Returns a human-readable description of the object.
+
+=cut
+
+sub description {
+    my $self = shift;
+    'Relation ' . "$self" . ' over ' . $self->cube->description
+}
+
 =head2 Overloaded operators
 
 =head3 Addition

@@ -436,6 +436,22 @@ sub modulo {
     CInet::Seq::Modulo->new(@_)
 }
 
+=head3 Other
+
+=head4 description
+
+    my $str = $seq->description;
+
+Returns a human-readable description of the object.
+
+=cut
+
+sub description {
+    use Scalar::Util qw(blessed);
+    my $self = shift;
+    'Lazy sequence of type ' . blessed($self)
+}
+
 =head1 AUTHOR
 
 Tobias Boege <tobs@taboege.de>

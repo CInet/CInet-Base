@@ -75,6 +75,12 @@ package CInet::Symmetry::Type {
         my ($class, $sub) = @_;
         bless $sub, $class
     }
+
+    sub description {
+        use Sub::Identify qw(sub_name);
+        my $sub = shift;
+        'Symmetry type ' . sub_name($sub)
+    }
 }
 
 =head2 Exported subs
