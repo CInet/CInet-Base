@@ -194,12 +194,13 @@ sub import {
     CInet::Relation   -> import::into(1);
     CInet::Symmetry   -> import::into(1);
 
-    CInet::Seq         -> import::into(1);
-    CInet::Seq::Map    -> import::into(1);
-    CInet::Seq::Grep   -> import::into(1);
-    CInet::Seq::Uniq   -> import::into(1);
-    CInet::Seq::List   -> import::into(1);
-    CInet::Seq::Modulo -> import::into(1);
+    CInet::Seq          -> import::into(1);
+    CInet::Seq::Wrapper -> import::into(1);
+    CInet::Seq::Map     -> import::into(1);
+    CInet::Seq::Grep    -> import::into(1);
+    CInet::Seq::Uniq    -> import::into(1);
+    CInet::Seq::List    -> import::into(1);
+    CInet::Seq::Modulo  -> import::into(1);
 }
 
 =head1 AUTHOR
