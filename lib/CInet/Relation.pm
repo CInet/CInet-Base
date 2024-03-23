@@ -392,6 +392,34 @@ sub representative {
     minstr map { $self->act($_) } @$group
 }
 
+=head3 delete
+
+    my $Ad = $A->delete($K);
+
+Return the minor of C<$A> where the elements of C<$K> are deleted.
+
+=cut
+
+sub delete {
+    my ($self, $K) = @_;
+    my $L = set_diff($self->cube->set, $K);
+    $self->minor([ $L, [] ])
+}
+
+=head3 contract
+
+    my $Ac = $A->contract($K);
+
+Return the minor of C<$A> where the elements of C<$K> are contracted.
+
+=cut
+
+sub contract {
+    my ($self, $K) = @_;
+    my $L = set_diff($self->cube->set, $K);
+    $self->minor([ $L, $K ])
+}
+
 =head3 minor
 
     my $a = $A->minor($IK);
