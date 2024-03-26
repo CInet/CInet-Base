@@ -11,7 +11,7 @@ CInet::Base - The basis for computations on CI structures
 
 =head2 VERSION
 
-This document describes CInet::Base v0.9.3.
+This document describes CInet::Base v0.10.2.
 
 =head1 DESCRIPTION
 
