@@ -95,6 +95,35 @@ is provided by the proper ordering of 2-face of the cube.
 The cube is a kind of I<domain> object which must be associated to a
 L<CInet::Relation> objects in order for it to work properly.
 
+=head3 The canonical ordering of faces
+
+To facilitate storage, search and retrieval objects which assign data to
+C<CInet::Cube> faces, we use the conventions from L<https://gaussoids.de>
+for how to order the faces of a fixed dimension. A face of the cube is
+represented by a pair of disjoint sets written in the form C<(I|K)>.
+The set C<I> indexes all coordinates which are allowed to vary; its
+cadinality is the dimension of the face. The set C<K> indexes all
+coordinates which are fixed to 1. The other coordinates are zero.
+This uniquely defines a face of the cube.
+
+Let the dimension C<d> be fixed. The enumeration of all faces of this
+dimension, proceeds in blocks. First, order all C<d>-subsets of the ground
+set lexicographically. For each such subset C<I>, a block is formed by
+emitting all faces C<(I|K)> where C<K> runs through all subsets of the
+complement of C<I>, stratified by cardinality and within each cardinality
+again lexicographically.
+
+For example, this produces all 2-faces in the canonical ordering
+(displayed block by block):
+
+    say join ", ", map { "(".FACE.")" } Cube(4)->squares;
+    #= (12|), (12|3), (12|4), (12|34),
+    #= (13|), (13|2), (13|4), (13|24),
+    #= (14|), (14|2), (14|3), (14|23),
+    #= (23|), (23|1), (23|4), (23|14),
+    #= (24|), (24|1), (24|3), (24|13),
+    #= (34|), (34|1), (34|2), (34|12)
+
 =head2 CInet::Relation
 
 A L<CInet::Relation> object represents a CI structure. It associates to
