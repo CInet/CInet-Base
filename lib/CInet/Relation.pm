@@ -126,7 +126,9 @@ Alternatively, the CI structure can be specified by giving a list of
 CI statements which should hold. These are either encoded as arrayrefs
 with two elements (denoting an elementary CI statement C<ij|K>, or a
 2-face of C<$cube>) or an arrayref with three elements (denoting a
-non-elementary CI statement C<A,B|C>).
+non-elementary CI statement C<A,B|C>). In this mode, all CI statements
+which are not included in the argument list get coefficient C<1>
+(meaning they are dependent, instead of undefined).
 
 =cut
 
@@ -137,7 +139,7 @@ sub new {
         my $s = shift(@args) // '*' x $cube->squares;
         return bless [ $cube, $s =~ s/_//gr ], $class;
     }
-    my $s = '*' x $cube->squares;
+    my $s = '1' x $cube->squares;
     my $A = bless [ $cube, $s ], $class;
     $A->cival($_) = 0 for @args;
     $A
