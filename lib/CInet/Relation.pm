@@ -31,7 +31,7 @@ use Carp;
 use CInet::Cube;
 use Sentinel;
 use List::Util qw(uniqstr);
-use Array::Set qw(set_union);
+use Array::Set qw(set_union set_diff);
 
 use Clone qw(clone);
 
