@@ -25,6 +25,7 @@ use Modern::Perl 2018;
 use Export::Attrs;
 use Carp;
 
+use CInet::Cube::Face;
 use Scalar::Util qw(reftype);
 use Algorithm::Combinatorics qw(subsets);
 use Array::Set qw(set_union set_intersect set_diff set_symdiff);
@@ -97,7 +98,7 @@ sub _make_faces {
         for my $k (0 .. @$M) {
             for my $K (subsets($M, $k)) {
                 my $face = [$I, $K];
-                $faces[$v] = $face;
+                $faces[$v] = FACE $face;
                 $codes{$face} = $v;
                 $v++;
             }

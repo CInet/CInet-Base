@@ -11,7 +11,7 @@ my $An = Cube($N);
 
 is $An, Cube(5), 'caching works';
 is 0+ $An->squares, 80, 'right amount';
-cmp_deeply $An->unpack(2, 13), [[1,3],[2,4]], 'variable no. 13 in dimension 5';
+cmp_deeply $An->unpack(2, 13), FACE([[1,3],[2,4]]), 'variable no. 13 in dimension 5';
 
 sub faces_txt {
     my ($n, $meth) = @_;
