@@ -407,6 +407,21 @@ sub undecorate {
     $self->map($code)
 }
 
+=head4 flatten
+
+    my $flat = $seq->flatten;
+    my $deepflat = $seq->flatten(deep => 1);
+
+Suppose that the invocant C<$seq> produces C<CInet::Seq> objects as its values.
+This method returns a new sequence of type L<CInet::Seq::Flatten> which splices
+their results together into one sequence.
+
+=cut
+
+sub flatten {
+    CInet::Seq::Flatten->new(@_)
+}
+
 =head3 Symmetry reduction
 
 =head4 modulo

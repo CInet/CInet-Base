@@ -208,7 +208,15 @@ L<CInet::Seq::Uniq> a stringy C<uniq> on a sequence,
 =item *
 
 L<CInet::Seq::Modulo> reducing a sequence of relations modulo one
-of the symmetry groups from L<CInet::Symmetry>.
+of the symmetry groups from L<CInet::Symmetry>,
+
+=item *
+
+L<CInet::Seq::Wrapper> to turn a coderef-based iterator into a sequence,
+
+=item *
+
+L<CInet::Seq::Flatten> for flattening a sequence of sequences.
 
 =back
 
@@ -224,6 +232,7 @@ sub import {
     CInet::Symmetry   -> import::into(1);
 
     CInet::Seq          -> import::into(1);
+    CInet::Seq::Flatten -> import::into(1);
     CInet::Seq::Wrapper -> import::into(1);
     CInet::Seq::Map     -> import::into(1);
     CInet::Seq::Grep    -> import::into(1);

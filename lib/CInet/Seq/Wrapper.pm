@@ -8,7 +8,7 @@ CInet::Seq::Wrapper - Wrap an iterator in a sequence
 
     # $gen is a coderef or an iterator with a C<next> method
     # which generates data if it is called repeatedly.
-    my $seq = CInet::Seq::Coderef->($gen);
+    my $seq = CInet::Seq::Wrapper->($gen);
 
 =cut
 
@@ -32,7 +32,7 @@ with 'CInet::Seq';
 
 =head3 new
 
-    my $map = CInet::Seq::Wrapper->new($gen);
+    my $wrap = CInet::Seq::Wrapper->new($gen);
 
 Constructs a CInet::Seq::Wrapper object for the given iterator.
 
